@@ -1,0 +1,5 @@
+.env
+cropsense-env/
+data/raw/*
+*.pt
+__pycache__/

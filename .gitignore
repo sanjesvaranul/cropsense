@@ -1,5 +1,7 @@
 .env
 cropsense-env/
 data/raw/*
+data/labeled/*.csv
 *.pt
+*.pth
 __pycache__/

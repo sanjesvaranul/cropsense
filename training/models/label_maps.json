@@ -1,0 +1,23 @@
+{
+  "crop_to_id": {
+    "Banana": 0,
+    "Cassava": 1,
+    "Coconut": 2,
+    "Diploid Cotton (Paruththi)": 3,
+    "Fodder Sorghum": 4,
+    "Groundnut": 5,
+    "Maize": 6,
+    "Mango": 7,
+    "Marigold": 8,
+    "Rice (Paddy)": 9,
+    "Sorghum": 10,
+    "Sugarcane": 11
+  },
+  "stage_to_id": {
+    "flowering": 0,
+    "full_growth": 1,
+    "harvesting": 2,
+    "sown": 3,
+    "vegetation": 4
+  }
+}

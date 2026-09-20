@@ -1,0 +1,36 @@
+Validation images: 633
+Crop accuracy: 0.8373
+Growth-stage accuracy: 0.7883
+
+CROP CLASSIFICATION REPORT
+                            precision    recall  f1-score   support
+
+                    Banana       0.00      0.00      0.00        12
+                   Cassava       0.00      0.00      0.00         0
+                   Coconut       0.94      0.72      0.81       113
+Diploid Cotton (Paruththi)       0.00      0.00      0.00         2
+            Fodder Sorghum       0.00      0.00      0.00         0
+                 Groundnut       0.00      0.00      0.00         1
+                     Maize       0.00      0.00      0.00        34
+                     Mango       0.00      0.00      0.00         0
+                  Marigold       0.00      0.00      0.00         1
+              Rice (Paddy)       0.82      1.00      0.90       450
+                   Sorghum       0.00      0.00      0.00         0
+                 Sugarcane       0.00      0.00      0.00        20
+
+                  accuracy                           0.84       633
+                 macro avg       0.15      0.14      0.14       633
+              weighted avg       0.75      0.84      0.79       633
+
+GROWTH-STAGE CLASSIFICATION REPORT
+              precision    recall  f1-score   support
+
+   flowering       0.00      0.00      0.00         5
+ full_growth       0.94      0.47      0.62       203
+  harvesting       0.00      0.00      0.00         8
+        sown       0.00      0.00      0.00         7
+  vegetation       0.76      0.99      0.86       410
+
+    accuracy                           0.79       633
+   macro avg       0.34      0.29      0.30       633
+weighted avg       0.79      0.79      0.76       633

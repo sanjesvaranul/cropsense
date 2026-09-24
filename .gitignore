@@ -5,3 +5,4 @@ data/labeled/*.csv
 *.pt
 *.pth
 __pycache__/
+*.pth

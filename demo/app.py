@@ -60,56 +60,60 @@ if uploaded:
                 st.divider()
 
                 if result["status"] == "confident":
-
-                    st.success(
-                        "Confident prediction"
-                    )
+                    st.success("Confident prediction")
 
                     col1, col2 = st.columns(2)
 
                     with col1:
-                        st.metric(
-                            "Crop",
-                            result["crop"]
-                        )
-
-                        st.metric(
-                            "Growth Stage",
-                            result["stage"]
-                        )
+                        st.metric("Crop", result["crop"])
+                        st.metric("Growth Stage", result["stage"])
 
                     with col2:
-                        st.metric(
-                            "Condition",
-                            result["condition"]
-                        )
+                        st.metric("Condition", result["condition"])
 
-                        st.metric(
-                            "Confidence",
-                            f"{result['confidence'] * 100:.1f}%"
-                        )
+                        crop_conf = result.get("crop_confidence")
+                        if crop_conf is not None:
+                            st.metric(
+                                "Crop Confidence",
+                                f"{crop_conf * 100:.2f}%"
+                            )
+
+                        stage_conf = result.get("stage_confidence")
+                        if stage_conf is not None:
+                            st.metric(
+                                "Growth Stage Confidence",
+                                f"{stage_conf * 100:.2f}%"
+                            )
 
                     st.caption(
                         f"Prediction source: {result['source']}"
                     )
 
                 else:
-
                     st.warning(
                         "The model is not confident enough "
                         "to provide a reliable prediction."
                     )
 
-                    st.metric(
-                        "Confidence",
-                        f"{result['confidence'] * 100:.1f}%"
-                    )
+                    crop_conf = result.get("crop_confidence")
+                    stage_conf = result.get("stage_confidence")
+
+                    if crop_conf is not None:
+                        st.metric(
+                            "Crop Confidence",
+                            f"{crop_conf * 100:.2f}%"
+                        )
+
+                    if stage_conf is not None:
+                        st.metric(
+                            "Growth Stage Confidence",
+                            f"{stage_conf * 100:.2f}%"
+                        )
 
                     st.info(
                         "This image should be reviewed by "
-                        "the teacher model or a human expert."
+                        "a human expert."
                     )
-
             except requests.exceptions.ConnectionError:
 
                 st.error(

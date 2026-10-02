@@ -1,0 +1,58 @@
+=================================================================
+CropSense - Comprehensive Multi-Task Held-Out Test Evaluation
+=================================================================
+Total Test Samples   : 351
+Crop Accuracy        : 93.16%
+Stage Accuracy       : 80.91%
+Disease Accuracy     : 99.15%
+High-Confidence Pass : 248/351 (70.66%)
+Abstention / Review  : 103/351 (29.34%)
+-----------------------------------------------------------------
+
+============================== CROP REPORT ======================
+                            precision    recall  f1-score   support
+
+                    Banana       0.57      0.50      0.53         8
+                   Cassava       0.00      0.00      0.00         1
+                   Coconut       0.86      0.88      0.87        64
+Diploid Cotton (Paruththi)       0.00      0.00      0.00         0
+            Fodder Sorghum       0.00      0.00      0.00         0
+                 Groundnut       1.00      1.00      1.00         1
+                     Maize       0.92      0.85      0.88        13
+                     Mango       0.00      0.00      0.00         0
+                  Marigold       0.00      0.00      0.00         0
+              Rice (Paddy)       0.96      0.97      0.97       251
+                   Sorghum       0.00      0.00      0.00         0
+                 Sugarcane       0.85      0.85      0.85        13
+
+                  accuracy                           0.93       351
+                 macro avg       0.43      0.42      0.42       351
+              weighted avg       0.93      0.93      0.93       351
+
+
+============================== STAGE REPORT =====================
+              precision    recall  f1-score   support
+
+   flowering       0.33      0.50      0.40         2
+ full_growth       0.82      0.70      0.75       116
+  harvesting       0.25      0.20      0.22         5
+        sown       0.57      0.50      0.53         8
+  vegetation       0.83      0.90      0.86       220
+
+    accuracy                           0.81       351
+   macro avg       0.56      0.56      0.55       351
+weighted avg       0.81      0.81      0.81       351
+
+
+============================ DISEASE/CONDITION REPORT ===========
+                       precision    recall  f1-score   support
+
+              Healthy       1.00      1.00      1.00       316
+Bacterial Leaf Blight       1.00      0.92      0.96        12
+           Brown Spot       0.92      0.86      0.89        14
+           Leaf Blast       1.00      1.00      1.00         5
+            Leaf Smut       0.67      1.00      0.80         4
+
+             accuracy                           0.99       351
+            macro avg       0.92      0.95      0.93       351
+         weighted avg       0.99      0.99      0.99       351

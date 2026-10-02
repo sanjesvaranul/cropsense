@@ -26,7 +26,7 @@ app = FastAPI(title="CropSense API")
 # ---------------- MODEL ----------------
 
 class CropSenseModel(nn.Module):
-    def __init__(self, num_crops, num_stages):
+    def __init__(self, num_crops, num_stages, num_conditions=5):
         super().__init__()
 
         backbone = models.efficientnet_b0(weights=None)
@@ -38,6 +38,7 @@ class CropSenseModel(nn.Module):
 
         self.crop_head = nn.Linear(feature_size, num_crops)
         self.stage_head = nn.Linear(feature_size, num_stages)
+        self.condition_head = nn.Linear(feature_size, num_conditions)
 
     def forward(self, x):
         x = self.features(x)
@@ -46,8 +47,9 @@ class CropSenseModel(nn.Module):
 
         crop_logits = self.crop_head(x)
         stage_logits = self.stage_head(x)
+        condition_logits = self.condition_head(x)
 
-        return crop_logits, stage_logits
+        return crop_logits, stage_logits, condition_logits
 
 
 # ---------------- LOAD MODEL ----------------
@@ -63,6 +65,13 @@ with open(LABELS_PATH, "r") as f:
 
 crop_map = mappings["crop_map"]
 stage_map = mappings["stage_map"]
+condition_map = mappings.get("condition_map", {
+    "Healthy": 0,
+    "Bacterial Leaf Blight": 1,
+    "Brown Spot": 2,
+    "Leaf Blast": 3,
+    "Leaf Smut": 4
+})
 
 # Convert index -> class name
 crop_names = {
@@ -73,15 +82,24 @@ stage_names = {
     int(index): name for name, index in stage_map.items()
 }
 
+condition_names = {
+    int(index): name for name, index in condition_map.items()
+}
+
 checkpoint = torch.load(
     MODEL_PATH,
     map_location=DEVICE,
     weights_only=True
 )
 
+num_crops = checkpoint.get("num_crops", len(crop_names))
+num_stages = checkpoint.get("num_stages", len(stage_names))
+num_conditions = checkpoint.get("num_conditions", len(condition_names))
+
 model = CropSenseModel(
-    checkpoint["num_crops"],
-    checkpoint["num_stages"]
+    num_crops,
+    num_stages,
+    num_conditions
 ).to(DEVICE)
 
 model.load_state_dict(checkpoint["model_state_dict"])
@@ -113,21 +131,23 @@ def run_student_model(image_bytes):
     tensor = transform(image).unsqueeze(0).to(DEVICE)
 
     with torch.no_grad():
-        crop_logits, stage_logits = model(tensor)
+        crop_logits, stage_logits, condition_logits = model(tensor)
 
     crop_result = predict_with_abstention(crop_logits)
     stage_result = predict_with_abstention(stage_logits)
+    condition_result = predict_with_abstention(condition_logits)
 
-    return crop_result, stage_result
+    return crop_result, stage_result, condition_result
 
 
-def log_feedback_case(filename, crop_result, stage_result):
+def log_feedback_case(filename, crop_result, stage_result, condition_result=None):
     # Placeholder for future feedback-dataset integration
     print(
         "Needs review:",
         filename,
         "Crop:", crop_result,
-        "Stage:", stage_result
+        "Stage:", stage_result,
+        "Condition:", condition_result
     )
 
 
@@ -137,8 +157,13 @@ def log_feedback_case(filename, crop_result, stage_result):
 def health_check():
     return {
         "status": "CropSense API is running",
-        "model": "EfficientNet-B0",
-        "device": str(DEVICE)
+        "model": "EfficientNet-B0 (Multi-Task: Crop, Stage, Disease)",
+        "device": str(DEVICE),
+        "classes": {
+            "num_crops": len(crop_names),
+            "num_stages": len(stage_names),
+            "num_conditions": len(condition_names)
+        }
     }
 
 
@@ -171,37 +196,54 @@ async def predict(file: UploadFile):
             detail="Uploaded image is empty."
         )
 
-    crop_result, stage_result = run_student_model(image_bytes)
+    crop_result, stage_result, condition_result = run_student_model(image_bytes)
 
     crop_id = crop_result["prediction"]
     stage_id = stage_result["prediction"]
+    condition_id = condition_result["prediction"]
 
     crop_confidence = crop_result["confidence"]
     stage_confidence = stage_result["confidence"]
+    disease_confidence = condition_result["confidence"]
 
-    # Require both outputs to pass the confidence threshold
-    if (
-        crop_result["status"] != "confident"
-        or stage_result["status"] != "confident"
-    ):
-        log_feedback_case(file.filename, crop_result, stage_result)
+    crop_name = crop_names.get(crop_id) if crop_id is not None else None
+    stage_name = stage_names.get(stage_id) if stage_id is not None else None
+    condition_name = condition_names.get(condition_id) if condition_id is not None else None
+
+    # Candidate names in case of abstention
+    cand_crop = crop_names.get(crop_result.get("candidate"))
+    cand_stage = stage_names.get(stage_result.get("candidate"))
+    cand_cond = condition_names.get(condition_result.get("candidate"))
+
+    # Require all outputs to pass the confidence threshold
+    is_confident = (
+        crop_result["status"] == "confident"
+        and stage_result["status"] == "confident"
+        and condition_result["status"] == "confident"
+    )
+
+    if not is_confident:
+        log_feedback_case(file.filename, crop_result, stage_result, condition_result)
 
         return {
             "source": "student",
-            "crop": crop_names.get(crop_id) if crop_id is not None else None,
-            "stage": stage_names.get(stage_id) if stage_id is not None else None,
-            "condition": "Not classified",
+            "crop": crop_name if crop_name is not None else cand_crop,
+            "stage": stage_name if stage_name is not None else cand_stage,
+            "condition": condition_name if condition_name is not None else cand_cond,
             "crop_confidence": crop_confidence,
             "stage_confidence": stage_confidence,
-            "status": "needs_review"
+            "disease_confidence": disease_confidence,
+            "status": "needs_review",
+            "abstention_reason": "One or more prediction heads fell below the 70% confidence threshold"
         }
 
     return {
         "source": "student",
-        "crop": crop_names[crop_id],
-        "stage": stage_names[stage_id],
-        "condition": "Not classified",
+        "crop": crop_name,
+        "stage": stage_name,
+        "condition": condition_name,
         "crop_confidence": crop_confidence,
         "stage_confidence": stage_confidence,
+        "disease_confidence": disease_confidence,
         "status": "confident"
     }

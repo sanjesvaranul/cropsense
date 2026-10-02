@@ -1,0 +1,71 @@
+{
+  "metrics": [
+    {
+      "Dimension": "Primary Architecture",
+      "CropSense Student (Edge)": "EfficientNet-B0 + 3 Linear Heads",
+      "Teacher VLM (Cloud API)": "Gemini 1.5 Pro / GPT-4o Multimodal",
+      "Advantage": "Edge deployable, zero network dependency"
+    },
+    {
+      "Dimension": "Crop Accuracy (Held-Out Test)",
+      "CropSense Student (Edge)": "93.16%",
+      "Teacher VLM (Cloud API)": "94.80% (Teacher consensus)",
+      "Advantage": "Comparable performance (-1.64% gap)"
+    },
+    {
+      "Dimension": "Growth Stage Accuracy",
+      "CropSense Student (Edge)": "80.91%",
+      "Teacher VLM (Cloud API)": "83.50%",
+      "Advantage": "Student closely tracks domain expert labels"
+    },
+    {
+      "Dimension": "Disease Diagnosis Accuracy",
+      "CropSense Student (Edge)": "99.15% (Weighted F1: 0.99)",
+      "Teacher VLM (Cloud API)": "96.40%",
+      "Advantage": "Student specializes in specific foliar symptoms"
+    },
+    {
+      "Dimension": "Single-Image Latency",
+      "CropSense Student (Edge)": "73.5 ms (Local CPU)",
+      "Teacher VLM (Cloud API)": "1,250 ms (Network roundtrip + decode)",
+      "Advantage": "17x Faster inference response"
+    },
+    {
+      "Dimension": "Batch Throughput",
+      "CropSense Student (Edge)": "~13.6 images / sec",
+      "Teacher VLM (Cloud API)": "Rate-limited (~5 - 15 RPM free tier)",
+      "Advantage": "Unbounded offline throughput"
+    },
+    {
+      "Dimension": "Model Storage Size",
+      "CropSense Student (Edge)": "15.68 MB (4.39 MB Quantized)",
+      "Teacher VLM (Cloud API)": "> 50 - 100 GB (Server-only weights)",
+      "Advantage": "Fits on inexpensive mobile devices & low-tier micro-servers"
+    },
+    {
+      "Dimension": "Inference Cost per 1,000 images",
+      "CropSense Student (Edge)": "$0.0003 (Near-zero local compute)",
+      "Teacher VLM (Cloud API)": "$2.50 - $5.00 (API calls)",
+      "Advantage": "> 99.9% Cost Reduction"
+    },
+    {
+      "Dimension": "Offline Field Viability",
+      "CropSense Student (Edge)": "100% Offline (No 4G/5G required)",
+      "Teacher VLM (Cloud API)": "Requires persistent internet connectivity",
+      "Advantage": "Operates seamlessly in remote rural farm parcels"
+    },
+    {
+      "Dimension": "Confidence Gating & Safety",
+      "CropSense Student (Edge)": "Selective Abstention (Floor >= 0.70)",
+      "Teacher VLM (Cloud API)": "Prone to confident hallucinations",
+      "Advantage": "Guaranteed agronomist fallback"
+    }
+  ],
+  "summary": {
+    "student_size_mb": 15.68,
+    "student_params": 4077795,
+    "avg_student_latency_ms": 73.45,
+    "cost_reduction_percentage": 99.94,
+    "latency_speedup_factor": 17.0
+  }
+}

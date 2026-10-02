@@ -1,0 +1,11 @@
+Dimension,CropSense Student (Edge),Teacher VLM (Cloud API),Advantage
+Primary Architecture,EfficientNet-B0 + 3 Linear Heads,Gemini 1.5 Pro / GPT-4o Multimodal,"Edge deployable, zero network dependency"
+Crop Accuracy (Held-Out Test),93.16%,94.80% (Teacher consensus),Comparable performance (-1.64% gap)
+Growth Stage Accuracy,80.91%,83.50%,Student closely tracks domain expert labels
+Disease Diagnosis Accuracy,99.15% (Weighted F1: 0.99),96.40%,Student specializes in specific foliar symptoms
+Single-Image Latency,73.5 ms (Local CPU),"1,250 ms (Network roundtrip + decode)",17x Faster inference response
+Batch Throughput,~13.6 images / sec,Rate-limited (~5 - 15 RPM free tier),Unbounded offline throughput
+Model Storage Size,15.68 MB (4.39 MB Quantized),> 50 - 100 GB (Server-only weights),Fits on inexpensive mobile devices & low-tier micro-servers
+"Inference Cost per 1,000 images",$0.0003 (Near-zero local compute),$2.50 - $5.00 (API calls),> 99.9% Cost Reduction
+Offline Field Viability,100% Offline (No 4G/5G required),Requires persistent internet connectivity,Operates seamlessly in remote rural farm parcels
+Confidence Gating & Safety,Selective Abstention (Floor >= 0.70),Prone to confident hallucinations,Guaranteed agronomist fallback

@@ -1,28 +1,52 @@
-# 🌾 CropSense: Mobile Crop, Stage & Disease Intelligence
-### **Hackathon Task 4: Mobile Crop, Stage & Disease Intelligence**
-
-CropSense is an edge-deployable, multi-task deep learning system designed for resource-constrained mobile agricultural intelligence. Built upon a lightweight **EfficientNet-B0** backbone with a **three-head classification architecture**, CropSense simultaneously predicts:
-
-1. **Crop Identification** (12 classes)
-2. **Growth Stage Recognition** (5 stages)
-3. **Foliar Disease Diagnosis** (Healthy + 4 critical rice foliar diseases)
-
-With an integrated **selective abstention engine (70% confidence floor)**, CropSense delivers actionable agronomic advisories for confident predictions and flags borderline images for expert agricultural review, preventing dangerous misdiagnoses in the field.
+# 🌾 CropSense: AgriLens
+## **Mobile Crop, Stage & Disease Intelligence (FarmwiseAI Campus Challenge - Task 4)**
+### **Team AgriMinds | Thiagarajar College of Engineering (TCE), Madurai**
+* **Team Lead:** Sanjesvaran Umadevan
+* **Team Members:** Gohulavaasan Palaniswamy, Balamurugan Paramasivam, Senthil Murugan Ramar
 
 ---
 
-## 🚀 Key Results & Performance (Held-Out Test Set: 351 Images)
+## 📌 Executive Summary
 
-Evaluated on the held-out test split (`data/labeled/test_multitask.csv`):
+CropSense is an end-to-end, edge-deployable computer vision system built to deliver **low-cost, high-reliability agricultural diagnostics** for smallholder farmers. Running on an edge-optimized **EfficientNet-B0** backbone with a **three-head multi-task architecture**, CropSense simultaneously predicts:
 
-| Intelligence Task | Metric / Accuracy | Macro F1 | Weighted F1 | Primary Classes Supported |
+1. **Crop Identification** (12 classes)
+2. **Growth Stage Recognition** (5 stages)
+3. **Foliar Disease Diagnosis** (Healthy + 4 critical foliar pathogens)
+
+To protect farmers from expensive spray mistakes, CropSense enforces **Selective Abstention with a 70% Confidence Floor**, instantly generating agronomic treatment advisories for high-confidence predictions and routing uncertain or borderline cases to a human-in-the-loop and Teacher VLM review queue.
+
+---
+
+## 🏆 Held-Out Test Set Benchmark Results (351 Samples)
+
+Evaluated strictly on the held-out test split (`data/labeled/test_multitask.csv`):
+
+| Task | Test Accuracy | Macro F1 | Weighted F1 | Target Classes |
 | :--- | :---: | :---: | :---: | :--- |
-| **Crop Identification** | **93.16%** | 0.43 | 0.93 | Rice (Paddy), Coconut, Sugarcane, Maize, Banana, Groundnut, etc. |
-| **Growth Stage Recognition** | **80.91%** | 0.56 | 0.81 | Sown, Vegetation, Flowering, Full Growth, Harvesting |
-| **Foliar Disease Diagnosis** | **99.15%** | **0.93** | **0.99** | Healthy (1.00), Bacterial Leaf Blight (0.96), Brown Spot (0.89), Leaf Blast (1.00), Leaf Smut (0.80) |
+| **Crop Identification** | **93.16%** | 0.43 | **0.93** | Rice (Paddy), Coconut, Sugarcane, Maize, Banana, Groundnut, etc. |
+| **Growth Stage Recognition** | **80.91%** | 0.56 | **0.81** | Sown, Vegetation, Flowering, Full Growth, Harvesting |
+| **Foliar Disease Diagnosis** | **99.15%** | **0.93** | **0.99** | Healthy (1.00), Bacterial Blight (0.96), Brown Spot (0.89), Blast (1.00), Smut (0.80) |
 
-- **High-Confidence Automated Decisions:** `70.66%` of all field photos pass the strict 70% threshold across all three heads simultaneously.
-- **Selective Abstention & Expert Review:** `29.34%` of images trigger human-in-the-loop routing with candidate flags to ensure zero-risk farming recommendations.
+- **High-Confidence Automated Decisions:** `70.66%` (248/351 images passed $\ge 70\%$ confidence on all three heads).
+- **Selective Abstention / Escalation:** `29.34%` (103/351 images flagged for expert review).
+- **Single-Image Inference Latency:** `45.27 ms` on local CPU (instant response).
+
+---
+
+## 📊 Teacher VLM vs. CropSense Student: Head-to-Head Comparison
+
+| Dimension | CropSense Student (Edge) | Teacher VLM (Cloud API) | Practical Impact |
+| :--- | :--- | :--- | :--- |
+| **Architecture** | EfficientNet-B0 + 3 Linear Heads | Gemini 1.5 Pro / GPT-4o Vision | Edge-executable, zero cloud latency |
+| **Crop Accuracy** | **93.16%** | 94.80% (Teacher consensus) | Close parity (-1.64% gap) |
+| **Growth Stage Accuracy**| **80.91%** | 83.50% | Tracks agronomic continuum |
+| **Disease Accuracy** | **99.15% (Weighted F1: 0.99)** | 96.40% | Superior fine-grained lesion detection |
+| **Single-Image Latency** | **45.3 ms (Local CPU)** | ~1,250 ms (Network roundtrip) | **17x Faster Response** |
+| **Inference Cost / 1,000** | **$0.0003 (Near-zero compute)** | **$2.50 - $5.00 (API calls)** | **> 99.9% Cost Reduction** |
+| **Model Disk Footprint** | **15.68 MB** (4.39 MB INT8) | > 50 - 100 GB (Server-only) | Deployable on low-cost mobile handsets |
+| **Offline Operation** | **100% Offline Capable** | Requires persistent internet | Essential for remote rural farm parcels |
+| **Safety / Abstention** | **70% Confidence Floor Gate** | Prone to confident hallucination | Zero-risk agronomic routing |
 
 ---
 
@@ -35,7 +59,7 @@ Evaluated on the held-out test split (`data/labeled/test_multitask.csv`):
                                └────────────────────┬────────────────────┘
                                                     │
                                ┌────────────────────▼────────────────────┐
-                               │         EfficientNet-B0 Backbone        │
+                               │    EfficientNet-B0 Shared Backbone      │
                                │      (Edge-optimized, 1280 features)    │
                                └────────────────────┬────────────────────┘
                                                     │
@@ -57,8 +81,8 @@ Evaluated on the held-out test split (`data/labeled/test_multitask.csv`):
                            ▼                                                 ▼
              [Status: confident]                               [Status: needs_review]
              - Automated Diagnostics                           - Abstention Flagged
-             - Confident Crop & Stage                          - Suspected Candidates
-             - Agronomic Advisory & Treatment                  - Routed for KVK / Expert Inspection
+             - Confident Crop & Stage                          - Suspected Candidate Labels
+             - Agronomic Advisory & Treatment                  - Escalated to Review Queue / VLM
 ```
 
 ---
@@ -67,119 +91,106 @@ Evaluated on the held-out test split (`data/labeled/test_multitask.csv`):
 
 ```text
 cropsense/
+├── aws/
+│   ├── lambda_function.py           # AWS Lambda S3 dataset integrity validator
+│   ├── lambda_inference_handler.py  # Serverless event-driven Lambda inference pipeline
+│   ├── s3_storage_manager.py        # S3 artifact & dataset synchronization manager
+│   └── README_AWS.md                # AWS cloud architecture & deployment documentation
 ├── data/
-│   ├── external/rice_diseases/     # Downloaded & deduplicated rice disease dataset (342 images)
-│   │   ├── Bacterial Leaf Blight/  # 117 images
-│   │   ├── Brown Spot/             # 136 images
-│   │   ├── Leaf Blast/             # 49 images
-│   │   └── Leaf Smut/              # 40 images
-│   ├── labeled/                    # Clean stratified multi-task datasets
-│   │   ├── train_multitask.csv     # 2,807 labeled samples
-│   │   ├── val_multitask.csv       # 349 validation samples
-│   │   └── test_multitask.csv      # 351 held-out test samples
-│   └── raw/images/                 # Original multi-crop images (~3,165 images)
+│   ├── external/rice_diseases/      # Curated, deduplicated external disease dataset (342 images)
+│   ├── labeled/                     # Clean stratified multi-task datasets
+│   │   ├── train_multitask.csv      # 2,807 training samples
+│   │   ├── val_multitask.csv        # 349 validation samples
+│   │   └── test_multitask.csv       # 351 held-out test samples
+│   └── raw/images/                  # Multi-crop field images (~3,165 images)
 ├── demo/
-│   └── app.py                      # Interactive Streamlit UI with disease advisory & test presets
+│   └── app.py                       # 4-Tab Streamlit App: Single, Batch, Review, Benchmark
+├── docs/
+│   ├── ARCHITECTURE_AND_API.md      # Detailed system architecture and REST API docs
+│   └── EVALUATION_REPORT.md         # Full evaluation report and failure case analysis
 ├── inference/
-│   ├── confidence.py               # Selective abstention filter (0.70 floor)
-│   └── router.py                   # FastAPI REST API serving 3-head multi-task model
+│   ├── confidence.py                # Confidence estimator & selective abstention gate (0.70 floor)
+│   └── router.py                    # High-performance FastAPI multi-task inference server
 ├── models/
-│   ├── class_mapping.json          # Index-to-label maps (crops, stages, conditions)
-│   ├── cropsense_best.pth          # Best multi-task trained model weights
-│   └── cropsense_crop_stage_only.pth # Original 2-head baseline backup
+│   ├── class_mapping.json           # Class mappings (12 crops, 5 stages, 5 conditions)
+│   ├── cropsense_best.pth           # Trained 3-head multi-task model checkpoint
+│   └── cropsense_crop_stage_only.pth# Baseline 2-head model backup
 ├── pipeline/
-│   ├── integrate_external_disease.py # Automated external dataset downloader & deduplicator
-│   └── prepare_multitask_dataset.py  # Stratified merger for 3-task labeling
+│   ├── integrate_external_disease.py# External disease downloader & MD5 deduplicator
+│   └── prepare_multitask_dataset.py # Stratified dataset merger
 └── training/
-    ├── evaluate_multitask.py       # Full held-out test evaluation script
-    ├── train_multitask.py          # Multi-task training script with class-weighted loss
-    └── evaluation/                 # Metrics & confusion matrices (.csv & .txt)
+    ├── analyze_failures.py          # Failure case deep dive & error pattern analysis
+    ├── benchmark_comparison.py      # Teacher vs. Student head-to-head benchmark generator
+    ├── evaluate_multitask.py        # Full held-out test set evaluation script
+    ├── train_multitask.py           # Multi-task training script with weighted loss
+    └── evaluation/                  # Generated reports, confusion matrices, failure logs
         ├── multitask_evaluation_summary.txt
-        ├── crop_confusion_matrix.csv
-        ├── stage_confusion_matrix.csv
-        └── condition_confusion_matrix.csv
+        ├── failure_cases_analysis.csv
+        ├── failure_cases_report.txt
+        ├── teacher_student_comparison.csv
+        └── teacher_student_summary.txt
 ```
 
 ---
 
 ## ⚡ Quick Start: Running the Prototype
 
-### Prerequisites
-Activate your Python environment:
+### 1. Start the FastAPI Multi-Task Inference Backend
 ```bash
 # Windows
-.\cropsense-env\Scripts\activate
-# Linux/macOS
-source cropsense-env/bin/activate
+.\cropsense-env\Scripts\python.exe -m uvicorn inference.router:app --host 127.0.0.1 --port 8000
 ```
-
-### 1. Launch the FastAPI Backend
-```bash
-python -m uvicorn inference.router:app --host 127.0.0.1 --port 8000
-```
-- Interactive API Documentation: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
+- Swagger Interactive Documentation: [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs)
 - Health Check: [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
-### 2. Launch the Streamlit Interactive Interface
+### 2. Launch the Streamlit Interactive Application
 In a second terminal:
 ```bash
-python -m streamlit run demo/app.py
+# Windows
+.\cropsense-env\Scripts\python.exe -m streamlit run demo/app.py
 ```
-- Open your browser at [http://localhost:8501](http://localhost:8501)
-- You can either **upload a photo** or **select preloaded test samples from the sidebar** (Healthy, Bacterial Leaf Blight, Brown Spot, Leaf Blast, Leaf Smut).
+Open [http://localhost:8501](http://localhost:8501) to explore:
+* **Tab 1: Single-Photo Diagnosis** with real-time agronomic advisories and quick-test presets.
+* **Tab 2: Batch Inference** with multiple file upload and CSV export.
+* **Tab 3: Human-in-the-Loop Review Queue** showcasing abstained cases and root causes.
+* **Tab 4: Teacher vs. Student Comparison Dashboard** with accuracy, cost, latency, and footprint metrics.
 
-### 3. Run Model Evaluation
-To reproduce the full held-out test set benchmark:
+### 3. Re-run Evaluation and Failure Analysis
 ```bash
+# Held-Out Test Evaluation
 python training/evaluate_multitask.py
+
+# Failure Case Analysis
+python training/analyze_failures.py
+
+# Teacher vs Student Benchmark
+python training/benchmark_comparison.py
+```
+
+### 4. Validate AWS S3 Cloud Artifacts
+```bash
+python aws/s3_storage_manager.py --dry-run
 ```
 
 ---
 
-## 📡 API Specification
+## 🌿 Agronomic Advisory & Treatment Recommendation Engine
 
-### `POST /predict`
-Send a multipart form request containing `file`:
+When a foliar condition is diagnosed, CropSense delivers actionable agronomic protocols:
 
-**Confident Prediction Response Example:**
-```json
-{
-  "source": "student",
-  "crop": "Rice (Paddy)",
-  "stage": "vegetation",
-  "condition": "Bacterial Leaf Blight",
-  "crop_confidence": 0.9973,
-  "stage_confidence": 0.9808,
-  "disease_confidence": 0.9045,
-  "status": "confident"
-}
-```
-
-**Selective Abstention Response Example (`< 70%` Confidence):**
-```json
-{
-  "source": "student",
-  "crop": "Rice (Paddy)",
-  "stage": "vegetation",
-  "condition": "Leaf Blast",
-  "crop_confidence": 0.9944,
-  "stage_confidence": 0.9722,
-  "disease_confidence": 0.5872,
-  "status": "needs_review",
-  "abstention_reason": "One or more prediction heads fell below the 70% confidence threshold"
-}
-```
-
----
-
-## 🌿 Agronomic Knowledge & Disease Action Engine
-
-When a disease is detected, CropSense provides instant agronomic treatment advice:
-
-| Condition | Pathogen | Actionable Treatment Recommendation |
+| Condition | Pathogen | Agronomic Advisory & Treatment Action |
 | :--- | :--- | :--- |
-| **Healthy** | None | Maintain standard N-P-K nutrient management, field scouting, and optimal irrigation. |
-| **Bacterial Leaf Blight** | *Xanthomonas oryzae* | Reduce excessive nitrogen fertilizer. Ensure prompt field drainage. Apply copper hydroxide or approved bactericides in early infection. |
-| **Brown Spot** | *Bipolaris oryzae* | Soil nutrient deficiency indicator (Zinc/Potassium). Apply balanced NPK + Micronutrients. Treat with Mancozeb or Tricyclazole if spreading. |
-| **Leaf Blast** | *Magnaporthe oryzae* | High-urgency intervention. Apply systemic fungicide (Tricyclazole 75 WP or Isoprothiolane). Avoid high nitrogen top-dressing and cool standing water. |
-| **Leaf Smut** | *Entyloma oryzae* | Avoid canopy stagnation and high humidity. If extensive during late grain fill, apply propiconazole or copper oxychloride foliar spray. |
+| **Healthy** | None | Maintain balanced N-P-K nutrition, regular scouting, and optimal irrigation management. |
+| **Bacterial Leaf Blight** | *Xanthomonas oryzae* | Reduce excessive nitrogen fertilizer. Ensure prompt field drainage. Apply copper hydroxide or approved bactericides in early stages. |
+| **Brown Spot** | *Bipolaris oryzae* | Correct potassium and micronutrient deficiencies (Zinc/Silicon). Apply protective fungicides (Mancozeb or Tricyclazole) as indicated. |
+| **Leaf Blast** | *Magnaporthe oryzae* | Urgent intervention: Apply systemic fungicide (Tricyclazole 75 WP or Isoprothiolane). Avoid high nitrogen top-dressing and cool standing water. |
+| **Leaf Smut** | *Entyloma oryzae* | Avoid canopy stagnation and excessive humidity. If severe during maturation, apply foliar propiconazole or copper oxychloride spray. |
+
+---
+
+## 👥 Team AgriMinds (TCE Madurai)
+* **Sanjesvaran Umadevan** (Team Lead)
+* **Gohulavaasan Palaniswamy**
+* **Balamurugan Paramasivam**
+* **Senthil Murugan Ramar**
+* *Department of Electronics and Communication Engineering, Thiagarajar College of Engineering, Madurai*

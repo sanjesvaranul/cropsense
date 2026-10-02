@@ -8,31 +8,31 @@
     },
     {
       "Dimension": "Crop Accuracy (Held-Out Test)",
-      "CropSense Student (Edge)": "93.16%",
+      "CropSense Student (Edge)": "94.02%",
       "Teacher VLM (Cloud API)": "94.80% (Teacher consensus)",
-      "Advantage": "Comparable performance (-1.64% gap)"
+      "Advantage": "Comparable performance (-0.78% gap)"
     },
     {
       "Dimension": "Growth Stage Accuracy",
-      "CropSense Student (Edge)": "80.91%",
+      "CropSense Student (Edge)": "82.34%",
       "Teacher VLM (Cloud API)": "83.50%",
       "Advantage": "Student closely tracks domain expert labels"
     },
     {
       "Dimension": "Disease Diagnosis Accuracy",
-      "CropSense Student (Edge)": "99.15% (Weighted F1: 0.99)",
+      "CropSense Student (Edge)": "99.43% (Weighted F1: 0.99)",
       "Teacher VLM (Cloud API)": "96.40%",
       "Advantage": "Student specializes in specific foliar symptoms"
     },
     {
       "Dimension": "Single-Image Latency",
-      "CropSense Student (Edge)": "73.5 ms (Local CPU)",
+      "CropSense Student (Edge)": "76.4 ms (Local CPU)",
       "Teacher VLM (Cloud API)": "1,250 ms (Network roundtrip + decode)",
-      "Advantage": "17x Faster inference response"
+      "Advantage": "16x Faster inference response"
     },
     {
       "Dimension": "Batch Throughput",
-      "CropSense Student (Edge)": "~13.6 images / sec",
+      "CropSense Student (Edge)": "~13.1 images / sec",
       "Teacher VLM (Cloud API)": "Rate-limited (~5 - 15 RPM free tier)",
       "Advantage": "Unbounded offline throughput"
     },
@@ -64,8 +64,8 @@
   "summary": {
     "student_size_mb": 15.68,
     "student_params": 4077795,
-    "avg_student_latency_ms": 73.45,
+    "avg_student_latency_ms": 76.37,
     "cost_reduction_percentage": 99.94,
-    "latency_speedup_factor": 17.0
+    "latency_speedup_factor": 16.4
   }
 }

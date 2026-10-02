@@ -24,13 +24,13 @@ Evaluated strictly on the held-out test split (`data/labeled/test_multitask.csv`
 
 | Task | Test Accuracy | Macro F1 | Weighted F1 | Target Classes |
 | :--- | :---: | :---: | :---: | :--- |
-| **Crop Identification** | **93.16%** | 0.43 | **0.93** | Rice (Paddy), Coconut, Sugarcane, Maize, Banana, Groundnut, etc. |
-| **Growth Stage Recognition** | **80.91%** | 0.56 | **0.81** | Sown, Vegetation, Flowering, Full Growth, Harvesting |
-| **Foliar Disease Diagnosis** | **99.15%** | **0.93** | **0.99** | Healthy (1.00), Bacterial Blight (0.96), Brown Spot (0.89), Blast (1.00), Smut (0.80) |
+| **Crop Identification** | **94.02%** | 0.44 | **0.94** | Rice (Paddy), Coconut, Sugarcane, Maize, Banana, Groundnut, etc. |
+| **Growth Stage Recognition** | **82.34%** | 0.59 | **0.83** | Sown, Vegetation, Flowering, Full Growth, Harvesting |
+| **Foliar Disease Diagnosis** | **99.43%** | **0.93** | **0.99** | Healthy (1.00), Bacterial Blight (1.00), Brown Spot (0.92), Blast (1.00), Smut (0.80) |
 
-- **High-Confidence Automated Decisions:** `70.66%` (248/351 images passed $\ge 70\%$ confidence on all three heads).
-- **Selective Abstention / Escalation:** `29.34%` (103/351 images flagged for expert review).
-- **Single-Image Inference Latency:** `45.27 ms` on local CPU (instant response).
+- **High-Confidence Automated Decisions:** `82.91%` (291/351 images passed $\ge 70\%$ confidence on all three heads).
+- **Selective Abstention / Escalation:** `17.09%` (60/351 images flagged for expert review).
+- **Single-Image Inference Latency:** `47.21 ms` on local CPU (instant response).
 
 ---
 

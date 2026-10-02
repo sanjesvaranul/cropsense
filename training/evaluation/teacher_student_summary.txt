@@ -8,8 +8,8 @@ TEACHER VS. STUDENT BENCHMARK SUMMARY (FARMWISEAI TASK 4)
    -> Delivers a 99.94% cost reduction for smallholder farmers.
 
 2. LATENCY & THROUGHPUT:
-   - Student delivers instant response (~73.5 ms) without API latency.
-   - Over 17x faster than commercial multimodal API calls.
+   - Student delivers instant response (~76.4 ms) without API latency.
+   - Over 16x faster than commercial multimodal API calls.
 
 3. EDGE COMPATIBILITY:
    - Full model package is only 15.68 MB (4.39 MB in INT8),

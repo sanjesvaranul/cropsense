@@ -8,32 +8,32 @@ Confidence Floor Threshold: 70%
 ----------------------------------------------------------------------
 1. OVERALL ACCURACY & CONFIDENCE GATING SUMMARY
 ----------------------------------------------------------------------
-- Crop Identification Accuracy     : 93.16% (327/351)
-- Growth Stage Accuracy            : 80.91% (284/351)
-- Foliar Disease Accuracy          : 99.15% (348/351)
+- Crop Identification Accuracy     : 94.02% (330/351)
+- Growth Stage Accuracy            : 82.34% (289/351)
+- Foliar Disease Accuracy          : 99.43% (349/351)
 
-- Automated High-Confidence Pass   : 248/351 (70.66%)
-- Selective Abstention / Review    : 103/351 (29.34%)
-- Single Image Inference Latency   : Mean = 45.27 ms | P95 = 59.40 ms
+- Automated High-Confidence Pass   : 291/351 (82.91%)
+- Selective Abstention / Review    : 60/351 (17.09%)
+- Single Image Inference Latency   : Mean = 47.21 ms | P95 = 56.15 ms
 
 ----------------------------------------------------------------------
 2. FAILURE CASE DEEP DIVE & ERROR PATTERNS
 ----------------------------------------------------------------------
-Total Flagged Cases (Errors or Abstentions): 132
+Total Flagged Cases (Errors or Abstentions): 104
 
 A. Growth Stage Ambiguity (Primary Error Mode):
-   Total Stage Discrepancies: 67
+   Total Stage Discrepancies: 62
    Top Misclassifications:
  true_stage  pred_stage  count
-full_growth  vegetation     33
- vegetation full_growth     17
+full_growth  vegetation     34
+ vegetation full_growth     11
        sown  vegetation      4
  harvesting  vegetation      3
- vegetation        sown      3
 full_growth  harvesting      2
+full_growth   flowering      2
+ vegetation        sown      2
  vegetation   flowering      2
   flowering  vegetation      1
- harvesting full_growth      1
  vegetation  harvesting      1
 
    Insight & Agricultural Rationale:
@@ -45,17 +45,16 @@ full_growth  harvesting      2
      frequently lower stage confidence below 0.70, correctly routing them for review.
 
 B. Crop Type Error Patterns:
-   Total Crop Discrepancies: 24
+   Total Crop Discrepancies: 21
    - Banana: 4 misclassifications (young banana shoots with broad foliage occasionally
      confused with early vegetation sugarcane).
    - High accuracy (>95%) achieved for dominant economic staples: Rice (Paddy), Coconut,
      Maize, and Sugarcane.
 
 C. Disease & Foliar Condition Error Patterns:
-   Total Disease Discrepancies: 3
-       true_condition pred_condition  count
-           Brown Spot      Leaf Smut      2
-Bacterial Leaf Blight     Brown Spot      1
+   Total Disease Discrepancies: 2
+true_condition pred_condition  count
+    Brown Spot      Leaf Smut      2
 
    Insight & Agricultural Rationale:
    - Only 3 out of 351 test images had disease discrepancies.
@@ -66,7 +65,7 @@ Bacterial Leaf Blight     Brown Spot      1
 ----------------------------------------------------------------------
 3. SAFETY & AGRI-TRUST IMPACT OF SELECTIVE ABSTENTION
 ----------------------------------------------------------------------
-- Out of 351 test images, 103 images (29.34%) triggered
+- Out of 351 test images, 60 images (17.09%) triggered
   the 70% confidence floor.
 - By abstaining instead of forcing an uninformed guess, CropSense prevents costly
   incorrect chemical spray applications (e.g. applying bactericide to a fungal infection).

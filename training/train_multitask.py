@@ -25,7 +25,7 @@ LABELS_PATH = MODEL_DIR / "class_mapping.json"
 
 IMAGE_SIZE = 224
 BATCH_SIZE = 32
-EPOCHS = 4
+EPOCHS = 2
 
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -36,27 +36,42 @@ STD = [0.229, 0.224, 0.225]
 # ---------------- DATASET ----------------
 
 class MultiTaskCropDataset(Dataset):
-    def __init__(self, csv_path, crop_map, stage_map, condition_map, training=False):
+    def __init__(self, csv_path, crop_map, stage_map, condition_map, training=False, minority_crops=None, minority_stages=None):
         self.df = pd.read_csv(csv_path)
         self.crop_map = crop_map
         self.stage_map = stage_map
         self.condition_map = condition_map
+        self.training = training
+        self.minority_crops = set(minority_crops or [])
+        self.minority_stages = set(minority_stages or [])
 
-        if training:
-            self.transform = transforms.Compose([
-                transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
-                transforms.RandomHorizontalFlip(p=0.5),
-                transforms.RandomRotation(degrees=15),
-                transforms.ColorJitter(brightness=0.1, contrast=0.1),
-                transforms.ToTensor(),
-                transforms.Normalize(MEAN, STD),
-            ])
-        else:
-            self.transform = transforms.Compose([
-                transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
-                transforms.ToTensor(),
-                transforms.Normalize(MEAN, STD),
-            ])
+        # Standard augmentation for majority classes
+        self.standard_transform = transforms.Compose([
+            transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
+            transforms.RandomHorizontalFlip(p=0.5),
+            transforms.RandomRotation(degrees=15),
+            transforms.ColorJitter(brightness=0.1, contrast=0.1),
+            transforms.ToTensor(),
+            transforms.Normalize(MEAN, STD),
+        ])
+
+        # Aggressive targeted augmentation for rare/minority classes
+        self.minority_transform = transforms.Compose([
+            transforms.RandomResizedCrop((IMAGE_SIZE, IMAGE_SIZE), scale=(0.75, 1.0)),
+            transforms.RandomHorizontalFlip(p=0.5),
+            transforms.RandomVerticalFlip(p=0.2),
+            transforms.RandomRotation(degrees=25),
+            transforms.ColorJitter(brightness=0.25, contrast=0.25, saturation=0.25),
+            transforms.ToTensor(),
+            transforms.Normalize(MEAN, STD),
+        ])
+
+        # Evaluation deterministic transform
+        self.eval_transform = transforms.Compose([
+            transforms.Resize((IMAGE_SIZE, IMAGE_SIZE)),
+            transforms.ToTensor(),
+            transforms.Normalize(MEAN, STD),
+        ])
 
     def __len__(self):
         return len(self.df)
@@ -69,14 +84,22 @@ class MultiTaskCropDataset(Dataset):
             with Image.open(image_path) as img:
                 image = img.convert("RGB")
         except Exception as e:
-            # Fallback for any corrupt image: black placeholder
-            print(f"Warning: Error opening {image_path}: {e}")
             image = Image.new("RGB", (IMAGE_SIZE, IMAGE_SIZE))
 
-        image = self.transform(image)
+        crop_name = row["crop"]
+        stage_name = row["growth_stage"]
 
-        crop_label = self.crop_map[row["crop"]]
-        stage_label = self.stage_map[row["growth_stage"]]
+        if self.training:
+            # Apply heavier dynamic augmentation if crop or stage is underrepresented
+            if crop_name in self.minority_crops or stage_name in self.minority_stages:
+                image = self.minority_transform(image)
+            else:
+                image = self.standard_transform(image)
+        else:
+            image = self.eval_transform(image)
+
+        crop_label = self.crop_map[crop_name]
+        stage_label = self.stage_map[stage_name]
         condition_label = self.condition_map[row["condition"]]
 
         return (
@@ -181,28 +204,67 @@ def main():
     print(f"Crops: {num_crops}, Stages: {num_stages}, Conditions: {num_conditions}")
     print(f"Train samples: {len(train_df)}, Val samples: {len(val_df)}")
 
-    # Compute balanced weights for condition loss
+    # 1. Compute balanced weights for Crop loss
+    crop_counts = np.zeros(num_crops, dtype=np.float32)
+    for c_idx in train_df["crop"].map(crop_map):
+        crop_counts[c_idx] += 1
+    # Square-root smoothed inverse frequency to balance without destabilizing N=1/2 classes
+    crop_weights_arr = np.sqrt(len(train_df) / (num_crops * np.maximum(crop_counts, 1.0)))
+    crop_weights_arr = np.clip(crop_weights_arr / crop_weights_arr.mean(), 0.3, 5.0)
+    crop_weights = torch.tensor(crop_weights_arr, dtype=torch.float).to(DEVICE)
+
+    # 2. Compute balanced weights for Stage loss
+    stage_counts = np.zeros(num_stages, dtype=np.float32)
+    for s_idx in train_df["growth_stage"].map(stage_map):
+        stage_counts[s_idx] += 1
+    stage_weights_arr = np.sqrt(len(train_df) / (num_stages * np.maximum(stage_counts, 1.0)))
+    stage_weights_arr = np.clip(stage_weights_arr / stage_weights_arr.mean(), 0.4, 4.0)
+    stage_weights = torch.tensor(stage_weights_arr, dtype=torch.float).to(DEVICE)
+
+    # 3. Compute balanced weights for Condition loss
     cond_counts = np.zeros(num_conditions, dtype=np.float32)
     for c_idx in train_df["condition"].map(condition_map):
         cond_counts[c_idx] += 1
-
     cond_weights_arr = len(train_df) / (num_conditions * np.maximum(cond_counts, 1.0))
-    # Normalize and clip weights to avoid excessive gradient explosion
     cond_weights_arr = np.clip(cond_weights_arr / cond_weights_arr.mean(), 0.3, 4.0)
     condition_weights = torch.tensor(cond_weights_arr, dtype=torch.float).to(DEVICE)
-    print("Condition loss weights:", {name: round(cond_weights_arr[idx], 2) for name, idx in condition_map.items()})
+
+    minority_crops = [name for name, idx in crop_map.items() if crop_counts[idx] < 100]
+    minority_stages = [name for name, idx in stage_map.items() if stage_counts[idx] < 100]
+
+    print("Crop loss weights:", {name: round(float(crop_weights_arr[idx]), 2) for name, idx in crop_map.items() if crop_counts[idx] < 200})
+    print("Stage loss weights:", {name: round(float(stage_weights_arr[idx]), 2) for name, idx in stage_map.items()})
+    print("Condition loss weights:", {name: round(float(cond_weights_arr[idx]), 2) for name, idx in condition_map.items()})
 
     train_dataset = MultiTaskCropDataset(
-        TRAIN_CSV, crop_map, stage_map, condition_map, training=True
+        TRAIN_CSV, crop_map, stage_map, condition_map,
+        training=True, minority_crops=minority_crops, minority_stages=minority_stages
     )
     val_dataset = MultiTaskCropDataset(
         VAL_CSV, crop_map, stage_map, condition_map, training=False
     )
 
+    # 4. Balanced WeightedRandomSampler across multi-task labels
+    from torch.utils.data import WeightedRandomSampler
+    sample_weights = []
+    for _, row in train_df.iterrows():
+        c_i = crop_map[row["crop"]]
+        s_i = stage_map[row["growth_stage"]]
+        d_i = condition_map[row["condition"]]
+        # Composite sampling weight (geometric combination)
+        w = float(crop_weights_arr[c_i] * stage_weights_arr[s_i] * cond_weights_arr[d_i]) ** (1.0 / 3.0)
+        sample_weights.append(w)
+
+    sampler = WeightedRandomSampler(
+        weights=sample_weights,
+        num_samples=len(train_df),
+        replacement=True
+    )
+
     train_loader = DataLoader(
         train_dataset,
         batch_size=BATCH_SIZE,
-        shuffle=True,
+        sampler=sampler,
         num_workers=0,
         pin_memory=False,
     )
@@ -217,9 +279,10 @@ def main():
     model = CropSenseModel(num_crops, num_stages, num_conditions).to(DEVICE)
 
     # Initialize from existing trained model checkpoint if available
-    if BACKUP_BASE_PATH.exists():
-        print(f"Loading weights from existing checkpoint: {BACKUP_BASE_PATH}")
-        ckpt = torch.load(BACKUP_BASE_PATH, map_location=DEVICE, weights_only=True)
+    init_ckpt_path = MODEL_PATH if MODEL_PATH.exists() else BACKUP_BASE_PATH
+    if init_ckpt_path.exists():
+        print(f"Loading weights from existing checkpoint: {init_ckpt_path}")
+        ckpt = torch.load(init_ckpt_path, map_location=DEVICE, weights_only=True)
         model_dict = model.state_dict()
         pretrained_dict = {
             k: v for k, v in ckpt["model_state_dict"].items()
@@ -229,8 +292,8 @@ def main():
         model.load_state_dict(model_dict)
         print(f"Successfully transferred {len(pretrained_dict)} layers!")
 
-    crop_criterion = nn.CrossEntropyLoss()
-    stage_criterion = nn.CrossEntropyLoss()
+    crop_criterion = nn.CrossEntropyLoss(weight=crop_weights)
+    stage_criterion = nn.CrossEntropyLoss(weight=stage_weights)
     condition_criterion = nn.CrossEntropyLoss(weight=condition_weights)
 
     # Differential learning rate: condition head learns faster, pretrained layers fine-tune gently

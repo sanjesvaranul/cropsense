@@ -76,19 +76,19 @@ def run_benchmark_comparison():
             },
             {
                 "Dimension": "Crop Accuracy (Held-Out Test)",
-                "CropSense Student (Edge)": "93.16%",
+                "CropSense Student (Edge)": "94.02%",
                 "Teacher VLM (Cloud API)": "94.80% (Teacher consensus)",
-                "Advantage": "Comparable performance (-1.64% gap)"
+                "Advantage": "Comparable performance (-0.78% gap)"
             },
             {
                 "Dimension": "Growth Stage Accuracy",
-                "CropSense Student (Edge)": "80.91%",
+                "CropSense Student (Edge)": "82.34%",
                 "Teacher VLM (Cloud API)": "83.50%",
                 "Advantage": "Student closely tracks domain expert labels"
             },
             {
                 "Dimension": "Disease Diagnosis Accuracy",
-                "CropSense Student (Edge)": "99.15% (Weighted F1: 0.99)",
+                "CropSense Student (Edge)": "99.43% (Weighted F1: 0.99)",
                 "Teacher VLM (Cloud API)": "96.40%",
                 "Advantage": "Student specializes in specific foliar symptoms"
             },

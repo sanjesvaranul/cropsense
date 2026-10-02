@@ -1,6 +1,6 @@
 ,flowering,full_growth,harvesting,sown,vegetation
 flowering,1,0,0,0,1
-full_growth,0,81,2,0,33
-harvesting,0,1,1,0,3
+full_growth,2,78,2,0,34
+harvesting,0,0,2,0,3
 sown,0,0,0,4,4
-vegetation,2,17,1,3,197
+vegetation,2,11,1,2,204

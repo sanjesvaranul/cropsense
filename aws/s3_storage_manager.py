@@ -8,6 +8,8 @@ from botocore.exceptions import NoCredentialsError, ClientError
 BUCKET_NAME = os.getenv("CROPSENSE_S3_BUCKET", "fai-tce-team46-cropsense-images")
 REGION_NAME = os.getenv("AWS_DEFAULT_REGION", "ap-south-1")
 
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
 LOCAL_FILES_TO_SYNC = [
     ("models/class_mapping.json", "models/class_mapping.json"),
     ("models/cropsense_best.pth", "models/cropsense_best.pth"),
@@ -45,10 +47,10 @@ def sync_artifacts_to_s3(dry_run=False):
     synced_count = 0
     missing_count = 0
 
-    for local_path_str, s3_key in LOCAL_FILES_TO_SYNC:
-        local_path = Path(local_path_str)
+    for local_rel_str, s3_key in LOCAL_FILES_TO_SYNC:
+        local_path = (PROJECT_ROOT / local_rel_str).resolve()
         if not local_path.exists():
-            print(f"⚠️  LOCAL MISSING: {local_path} (Skipped)")
+            print(f"[LOCAL MISSING] {local_path} (Skipped)")
             missing_count += 1
             continue
 

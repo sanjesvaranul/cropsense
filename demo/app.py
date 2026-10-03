@@ -274,7 +274,7 @@ with tab3:
         with col_f1:
             st.metric("Total Flagged / Review Cases", len(df_fail))
         with col_f2:
-            st.metric("Abstention Rate on Test Set", "29.34%")
+            st.metric("Selective Abstention Rate (< 70%)", "17.09%")
         with col_f3:
             st.metric("Safety Floor Threshold", "70.0%")
 
@@ -290,7 +290,7 @@ with tab3:
         st.info("""
         - **Growth Stage Continuum:** The majority of stage misclassifications occur at the transitional boundary between *vegetation* and *full_growth*. CropSense automatically detects this ambiguity and abstains rather than making an unverified guess.
         - **Crop Type Consistency:** Staple crops (Rice, Coconut, Maize, Sugarcane) maintain >95% accuracy.
-        - **Disease Diagnostics:** 99.15% overall accuracy on foliar diseases with only 3 boundary cases across 351 test images.
+        - **Disease Diagnostics:** 99.43% overall accuracy on foliar diseases with only 2 boundary cases across 351 test images.
         """)
     else:
         st.info("Run `python training/analyze_failures.py` to generate the test failure queue.")
@@ -314,11 +314,11 @@ with tab4:
         with c_b1:
             st.metric("Cost Reduction", "99.94%", delta="Cheaper than API")
         with c_b2:
-            st.metric("Latency Speedup", "17x Faster", delta="Instant Response")
+            st.metric("Latency Speedup", "16x Faster", delta="Instant Response")
         with c_b3:
             st.metric("Model Footprint", "15.68 MB", delta="Mobile-Ready")
         with c_b4:
-            st.metric("Disease Accuracy", "99.15%", delta="+2.75% vs VLM")
+            st.metric("Disease Accuracy", "99.43%", delta="+3.03% vs VLM")
 
         st.success("""
         **Key Takeaway for FarmwiseAI:**

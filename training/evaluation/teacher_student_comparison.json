@@ -26,13 +26,13 @@
     },
     {
       "Dimension": "Single-Image Latency",
-      "CropSense Student (Edge)": "76.4 ms (Local CPU)",
+      "CropSense Student (Edge)": "66.3 ms (Local CPU)",
       "Teacher VLM (Cloud API)": "1,250 ms (Network roundtrip + decode)",
-      "Advantage": "16x Faster inference response"
+      "Advantage": "19x Faster inference response"
     },
     {
       "Dimension": "Batch Throughput",
-      "CropSense Student (Edge)": "~13.1 images / sec",
+      "CropSense Student (Edge)": "~15.1 images / sec",
       "Teacher VLM (Cloud API)": "Rate-limited (~5 - 15 RPM free tier)",
       "Advantage": "Unbounded offline throughput"
     },
@@ -64,8 +64,8 @@
   "summary": {
     "student_size_mb": 15.68,
     "student_params": 4077795,
-    "avg_student_latency_ms": 76.37,
+    "avg_student_latency_ms": 66.3,
     "cost_reduction_percentage": 99.94,
-    "latency_speedup_factor": 16.4
+    "latency_speedup_factor": 18.9
   }
 }

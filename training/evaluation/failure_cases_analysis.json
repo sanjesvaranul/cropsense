@@ -14,7 +14,7 @@
     "condition_conf": 0.8613,
     "condition_correct": false,
     "status": "confident",
-    "latency_ms": 43.26,
+    "latency_ms": 47.57,
     "failure_category": "Condition Error (Brown Spot -> Leaf Smut)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -33,7 +33,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 42.69,
+    "latency_ms": 49.19,
     "failure_category": "Low Confidence Abstention: Stage (50.7%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -52,7 +52,7 @@
     "condition_conf": 0.9849,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 42.4,
+    "latency_ms": 63.04,
     "failure_category": "Crop Error (Coconut -> Rice (Paddy)); Stage Error (full_growth -> vegetation); Low Confidence Abstention: Crop (39.0%), Stage (50.4%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -71,7 +71,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 46.09,
+    "latency_ms": 48.71,
     "failure_category": "Crop Error (Rice (Paddy) -> Sugarcane)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -90,7 +90,7 @@
     "condition_conf": 0.9945,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 44.49,
+    "latency_ms": 47.76,
     "failure_category": "Crop Error (Rice (Paddy) -> Maize); Low Confidence Abstention: Crop (38.8%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -109,7 +109,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 41.07,
+    "latency_ms": 46.86,
     "failure_category": "Low Confidence Abstention: Stage (61.4%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -128,7 +128,7 @@
     "condition_conf": 0.9997,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 62.64,
+    "latency_ms": 40.9,
     "failure_category": "Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -147,7 +147,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 60.13,
+    "latency_ms": 42.6,
     "failure_category": "Low Confidence Abstention: Stage (63.9%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -166,7 +166,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 53.35,
+    "latency_ms": 45.46,
     "failure_category": "Stage Error (vegetation -> sown)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -185,7 +185,7 @@
     "condition_conf": 0.9997,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 57.87,
+    "latency_ms": 47.88,
     "failure_category": "Crop Error (Rice (Paddy) -> Coconut); Stage Error (vegetation -> full_growth); Low Confidence Abstention: Crop (69.5%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -204,7 +204,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 99.37,
+    "latency_ms": 41.22,
     "failure_category": "Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -223,7 +223,7 @@
     "condition_conf": 0.9992,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.3,
+    "latency_ms": 42.66,
     "failure_category": "Low Confidence Abstention: Stage (66.0%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -242,7 +242,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.45,
+    "latency_ms": 41.66,
     "failure_category": "Crop Error (Sugarcane -> Coconut); Stage Error (full_growth -> vegetation); Low Confidence Abstention: Stage (59.1%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -261,7 +261,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 42.25,
+    "latency_ms": 39.24,
     "failure_category": "Low Confidence Abstention: Stage (64.6%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -280,7 +280,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.27,
+    "latency_ms": 37.64,
     "failure_category": "Low Confidence Abstention: Stage (51.8%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -299,7 +299,7 @@
     "condition_conf": 0.9996,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 46.74,
+    "latency_ms": 44.85,
     "failure_category": "Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -318,7 +318,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 46.56,
+    "latency_ms": 54.51,
     "failure_category": "Stage Error (vegetation -> flowering)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -337,7 +337,7 @@
     "condition_conf": 0.9988,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 47.65,
+    "latency_ms": 82.57,
     "failure_category": "Stage Error (vegetation -> full_growth)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -356,7 +356,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 44.55,
+    "latency_ms": 54.5,
     "failure_category": "Low Confidence Abstention: Crop (67.4%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -375,7 +375,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 44.34,
+    "latency_ms": 48.47,
     "failure_category": "Stage Error (sown -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -394,7 +394,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 43.93,
+    "latency_ms": 50.47,
     "failure_category": "Crop Error (Coconut -> Rice (Paddy)); Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -413,7 +413,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 55.84,
+    "latency_ms": 46.59,
     "failure_category": "Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -432,7 +432,7 @@
     "condition_conf": 0.9976,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.14,
+    "latency_ms": 41.34,
     "failure_category": "Stage Error (full_growth -> flowering); Low Confidence Abstention: Stage (65.9%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -451,7 +451,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 45.73,
+    "latency_ms": 41.4,
     "failure_category": "Stage Error (vegetation -> full_growth)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -470,7 +470,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 42.91,
+    "latency_ms": 54.99,
     "failure_category": "Stage Error (full_growth -> vegetation); Low Confidence Abstention: Stage (69.1%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -489,7 +489,7 @@
     "condition_conf": 0.999,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 47.49,
+    "latency_ms": 62.36,
     "failure_category": "Crop Error (Coconut -> Banana)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -508,7 +508,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.24,
+    "latency_ms": 57.37,
     "failure_category": "Low Confidence Abstention: Stage (66.6%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -527,7 +527,7 @@
     "condition_conf": 0.5725,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 45.5,
+    "latency_ms": 48.0,
     "failure_category": "Low Confidence Abstention: Disease (57.3%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -546,7 +546,7 @@
     "condition_conf": 0.9997,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 45.3,
+    "latency_ms": 46.43,
     "failure_category": "Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -565,7 +565,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 45.23,
+    "latency_ms": 46.22,
     "failure_category": "Low Confidence Abstention: Crop (50.6%), Stage (60.8%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -584,7 +584,7 @@
     "condition_conf": 0.9837,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 44.11,
+    "latency_ms": 47.3,
     "failure_category": "Stage Error (full_growth -> harvesting)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -603,7 +603,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.36,
+    "latency_ms": 41.73,
     "failure_category": "Stage Error (full_growth -> vegetation); Low Confidence Abstention: Stage (58.0%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -622,7 +622,7 @@
     "condition_conf": 0.9989,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 47.35,
+    "latency_ms": 42.53,
     "failure_category": "Crop Error (Maize -> Rice (Paddy))",
     "action_required": "Model Fine-tuning Target"
   },
@@ -641,7 +641,7 @@
     "condition_conf": 0.9953,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.51,
+    "latency_ms": 41.99,
     "failure_category": "Low Confidence Abstention: Stage (69.1%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -660,7 +660,7 @@
     "condition_conf": 0.8457,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 45.65,
+    "latency_ms": 54.3,
     "failure_category": "Stage Error (vegetation -> full_growth); Low Confidence Abstention: Stage (46.3%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -679,7 +679,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 44.15,
+    "latency_ms": 48.67,
     "failure_category": "Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -698,7 +698,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 41.87,
+    "latency_ms": 51.26,
     "failure_category": "Low Confidence Abstention: Stage (65.6%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -717,7 +717,7 @@
     "condition_conf": 0.6719,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 44.94,
+    "latency_ms": 61.58,
     "failure_category": "Low Confidence Abstention: Disease (67.2%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -736,7 +736,7 @@
     "condition_conf": 0.995,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 46.54,
+    "latency_ms": 41.06,
     "failure_category": "Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -755,7 +755,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 47.06,
+    "latency_ms": 44.25,
     "failure_category": "Stage Error (vegetation -> full_growth); Low Confidence Abstention: Stage (59.1%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -774,7 +774,7 @@
     "condition_conf": 0.9998,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 42.86,
+    "latency_ms": 40.89,
     "failure_category": "Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -793,7 +793,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 48.15,
+    "latency_ms": 48.98,
     "failure_category": "Stage Error (full_growth -> harvesting)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -812,7 +812,7 @@
     "condition_conf": 0.9964,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.96,
+    "latency_ms": 46.84,
     "failure_category": "Stage Error (harvesting -> vegetation); Low Confidence Abstention: Crop (48.1%), Stage (58.6%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -831,7 +831,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 44.76,
+    "latency_ms": 44.57,
     "failure_category": "Stage Error (full_growth -> vegetation); Low Confidence Abstention: Stage (60.3%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -850,7 +850,7 @@
     "condition_conf": 0.9586,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 43.2,
+    "latency_ms": 43.56,
     "failure_category": "Stage Error (vegetation -> flowering); Low Confidence Abstention: Crop (68.3%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -869,7 +869,7 @@
     "condition_conf": 0.9977,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 47.9,
+    "latency_ms": 41.39,
     "failure_category": "Crop Error (Cassava -> Banana); Low Confidence Abstention: Stage (68.8%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -888,7 +888,7 @@
     "condition_conf": 0.999,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 46.53,
+    "latency_ms": 48.14,
     "failure_category": "Stage Error (vegetation -> sown)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -907,7 +907,7 @@
     "condition_conf": 0.998,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 43.88,
+    "latency_ms": 64.67,
     "failure_category": "Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -926,7 +926,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 46.68,
+    "latency_ms": 46.26,
     "failure_category": "Stage Error (sown -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -945,7 +945,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.2,
+    "latency_ms": 40.85,
     "failure_category": "Crop Error (Banana -> Coconut); Low Confidence Abstention: Crop (68.1%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -964,7 +964,7 @@
     "condition_conf": 0.9972,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 49.32,
+    "latency_ms": 36.47,
     "failure_category": "Stage Error (full_growth -> vegetation); Low Confidence Abstention: Stage (58.7%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -983,7 +983,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.85,
+    "latency_ms": 37.0,
     "failure_category": "Crop Error (Maize -> Rice (Paddy)); Low Confidence Abstention: Crop (60.2%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1002,7 +1002,7 @@
     "condition_conf": 0.9996,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 54.99,
+    "latency_ms": 35.16,
     "failure_category": "Crop Error (Coconut -> Sugarcane); Low Confidence Abstention: Stage (59.3%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1021,7 +1021,7 @@
     "condition_conf": 0.9908,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 47.79,
+    "latency_ms": 40.86,
     "failure_category": "Crop Error (Rice (Paddy) -> Sugarcane); Stage Error (vegetation -> full_growth); Low Confidence Abstention: Crop (36.5%), Stage (52.2%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1040,7 +1040,7 @@
     "condition_conf": 0.999,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 45.33,
+    "latency_ms": 44.9,
     "failure_category": "Stage Error (full_growth -> vegetation); Low Confidence Abstention: Stage (68.0%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1059,7 +1059,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 47.7,
+    "latency_ms": 41.21,
     "failure_category": "Crop Error (Banana -> Coconut); Low Confidence Abstention: Crop (65.3%), Stage (55.7%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1078,7 +1078,7 @@
     "condition_conf": 0.9796,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 44.84,
+    "latency_ms": 43.58,
     "failure_category": "Stage Error (full_growth -> vegetation); Low Confidence Abstention: Crop (67.8%), Stage (68.3%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1097,7 +1097,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 44.63,
+    "latency_ms": 49.12,
     "failure_category": "Low Confidence Abstention: Crop (67.5%), Stage (65.4%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1116,7 +1116,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 49.03,
+    "latency_ms": 37.91,
     "failure_category": "Stage Error (vegetation -> full_growth)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1135,7 +1135,7 @@
     "condition_conf": 0.9991,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 49.6,
+    "latency_ms": 40.34,
     "failure_category": "Low Confidence Abstention: Stage (47.4%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1154,7 +1154,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 45.97,
+    "latency_ms": 188.02,
     "failure_category": "Low Confidence Abstention: Crop (67.5%), Stage (65.4%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1173,7 +1173,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 47.52,
+    "latency_ms": 36.61,
     "failure_category": "Crop Error (Coconut -> Rice (Paddy)); Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1192,7 +1192,7 @@
     "condition_conf": 0.9997,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 45.69,
+    "latency_ms": 35.45,
     "failure_category": "Stage Error (full_growth -> vegetation); Low Confidence Abstention: Stage (67.5%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1211,7 +1211,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 47.06,
+    "latency_ms": 42.6,
     "failure_category": "Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1230,7 +1230,7 @@
     "condition_conf": 0.9975,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 47.63,
+    "latency_ms": 39.46,
     "failure_category": "Low Confidence Abstention: Stage (59.9%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1249,7 +1249,7 @@
     "condition_conf": 0.9998,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 42.64,
+    "latency_ms": 39.0,
     "failure_category": "Stage Error (sown -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1268,7 +1268,7 @@
     "condition_conf": 0.9872,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 44.38,
+    "latency_ms": 40.54,
     "failure_category": "Low Confidence Abstention: Crop (58.0%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1287,7 +1287,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 42.23,
+    "latency_ms": 43.25,
     "failure_category": "Crop Error (Banana -> Coconut)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1306,7 +1306,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 49.84,
+    "latency_ms": 39.31,
     "failure_category": "Stage Error (vegetation -> full_growth)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1325,7 +1325,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 48.08,
+    "latency_ms": 39.16,
     "failure_category": "Crop Error (Sugarcane -> Rice (Paddy)); Low Confidence Abstention: Crop (36.6%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1344,7 +1344,7 @@
     "condition_conf": 0.6534,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.65,
+    "latency_ms": 38.2,
     "failure_category": "Low Confidence Abstention: Disease (65.3%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1363,7 +1363,7 @@
     "condition_conf": 0.9987,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.78,
+    "latency_ms": 46.8,
     "failure_category": "Stage Error (full_growth -> flowering); Low Confidence Abstention: Crop (40.0%), Stage (34.0%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1382,7 +1382,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 45.91,
+    "latency_ms": 50.65,
     "failure_category": "Low Confidence Abstention: Stage (69.2%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1401,7 +1401,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 44.23,
+    "latency_ms": 53.68,
     "failure_category": "Stage Error (vegetation -> full_growth); Low Confidence Abstention: Crop (60.9%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1420,7 +1420,7 @@
     "condition_conf": 0.9992,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 43.97,
+    "latency_ms": 37.31,
     "failure_category": "Low Confidence Abstention: Stage (54.2%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1439,7 +1439,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 43.56,
+    "latency_ms": 36.25,
     "failure_category": "Low Confidence Abstention: Stage (69.6%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1458,7 +1458,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.9,
+    "latency_ms": 35.13,
     "failure_category": "Stage Error (harvesting -> vegetation); Low Confidence Abstention: Stage (52.6%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1477,7 +1477,7 @@
     "condition_conf": 0.9938,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.89,
+    "latency_ms": 99.37,
     "failure_category": "Low Confidence Abstention: Crop (61.4%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1496,7 +1496,7 @@
     "condition_conf": 0.9972,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 43.97,
+    "latency_ms": 48.26,
     "failure_category": "Stage Error (full_growth -> vegetation); Low Confidence Abstention: Stage (58.7%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1515,7 +1515,7 @@
     "condition_conf": 0.977,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 42.76,
+    "latency_ms": 40.58,
     "failure_category": "Crop Error (Coconut -> Rice (Paddy)); Stage Error (full_growth -> vegetation); Low Confidence Abstention: Stage (54.4%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1534,7 +1534,7 @@
     "condition_conf": 0.9929,
     "condition_correct": false,
     "status": "confident",
-    "latency_ms": 48.36,
+    "latency_ms": 37.88,
     "failure_category": "Condition Error (Brown Spot -> Leaf Smut)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1553,7 +1553,7 @@
     "condition_conf": 0.9991,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 44.16,
+    "latency_ms": 45.6,
     "failure_category": "Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1572,7 +1572,7 @@
     "condition_conf": 0.9997,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 44.63,
+    "latency_ms": 45.35,
     "failure_category": "Low Confidence Abstention: Stage (52.0%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1591,7 +1591,7 @@
     "condition_conf": 0.9931,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 46.13,
+    "latency_ms": 41.93,
     "failure_category": "Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1610,7 +1610,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.25,
+    "latency_ms": 35.5,
     "failure_category": "Low Confidence Abstention: Stage (52.0%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1629,7 +1629,7 @@
     "condition_conf": 0.6692,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.9,
+    "latency_ms": 38.63,
     "failure_category": "Low Confidence Abstention: Stage (45.3%), Disease (66.9%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1648,7 +1648,7 @@
     "condition_conf": 0.9998,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 47.82,
+    "latency_ms": 35.15,
     "failure_category": "Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1667,7 +1667,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 43.94,
+    "latency_ms": 36.81,
     "failure_category": "Low Confidence Abstention: Stage (56.0%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1686,7 +1686,7 @@
     "condition_conf": 0.9975,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 45.9,
+    "latency_ms": 36.06,
     "failure_category": "Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1705,7 +1705,7 @@
     "condition_conf": 0.9998,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 47.05,
+    "latency_ms": 43.86,
     "failure_category": "Crop Error (Sugarcane -> Rice (Paddy)); Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1724,7 +1724,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 45.82,
+    "latency_ms": 44.07,
     "failure_category": "Stage Error (harvesting -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1743,7 +1743,7 @@
     "condition_conf": 0.9995,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 44.5,
+    "latency_ms": 39.91,
     "failure_category": "Stage Error (sown -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1762,7 +1762,7 @@
     "condition_conf": 0.8648,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.64,
+    "latency_ms": 34.97,
     "failure_category": "Low Confidence Abstention: Crop (27.9%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1781,7 +1781,7 @@
     "condition_conf": 0.9998,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 59.59,
+    "latency_ms": 37.59,
     "failure_category": "Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1800,7 +1800,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 46.56,
+    "latency_ms": 45.88,
     "failure_category": "Stage Error (vegetation -> full_growth)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1819,7 +1819,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 46.96,
+    "latency_ms": 78.46,
     "failure_category": "Low Confidence Abstention: Stage (59.4%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1838,7 +1838,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 43.49,
+    "latency_ms": 38.56,
     "failure_category": "Stage Error (flowering -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1857,7 +1857,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 47.48,
+    "latency_ms": 38.29,
     "failure_category": "Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1876,7 +1876,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 44.08,
+    "latency_ms": 39.21,
     "failure_category": "Stage Error (full_growth -> vegetation); Low Confidence Abstention: Stage (56.2%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1895,7 +1895,7 @@
     "condition_conf": 0.9445,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 48.63,
+    "latency_ms": 60.12,
     "failure_category": "Crop Error (Coconut -> Rice (Paddy)); Stage Error (vegetation -> harvesting)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1914,7 +1914,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 43.67,
+    "latency_ms": 36.73,
     "failure_category": "Stage Error (full_growth -> vegetation); Low Confidence Abstention: Stage (65.1%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1933,7 +1933,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "needs_review",
-    "latency_ms": 45.55,
+    "latency_ms": 40.02,
     "failure_category": "Crop Error (Coconut -> Rice (Paddy)); Stage Error (full_growth -> vegetation); Low Confidence Abstention: Stage (64.8%)",
     "action_required": "Escalate to Teacher VLM / Agronomist Review"
   },
@@ -1952,7 +1952,7 @@
     "condition_conf": 1.0,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 46.69,
+    "latency_ms": 39.89,
     "failure_category": "Stage Error (vegetation -> full_growth)",
     "action_required": "Model Fine-tuning Target"
   },
@@ -1971,7 +1971,7 @@
     "condition_conf": 0.9999,
     "condition_correct": true,
     "status": "confident",
-    "latency_ms": 41.61,
+    "latency_ms": 37.22,
     "failure_category": "Stage Error (full_growth -> vegetation)",
     "action_required": "Model Fine-tuning Target"
   }

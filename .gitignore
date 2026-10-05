@@ -6,3 +6,4 @@ data/labeled/*.csv
 *.pth
 __pycache__/
 *.pth
+*.zip

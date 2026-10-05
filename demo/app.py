@@ -1,9 +1,13 @@
 import io
 from pathlib import Path
+import numpy as np
 import pandas as pd
 import requests
 import streamlit as st
 from PIL import Image
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 API_URL = "http://127.0.0.1:8000/predict"
 EVAL_DIR = Path("training/evaluation")
@@ -70,11 +74,12 @@ ADVISORIES = {
     }
 }
 
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📸 Single-Photo Diagnosis",
     "📂 Batch Inference & Export",
     "⚠️ Review Queue & Failure Analysis",
-    "📊 Teacher vs. Student Benchmark"
+    "📊 Teacher vs. Student Benchmark",
+    "📈 Evaluation & Confusion Matrices"
 ])
 
 # ==============================================================================
@@ -326,3 +331,118 @@ with tab4:
         """)
     else:
         st.info("Run `python training/benchmark_comparison.py` to generate the benchmark comparison.")
+
+# ==============================================================================
+# TAB 5: EVALUATION & CONFUSION MATRICES
+# ==============================================================================
+with tab5:
+    st.markdown("### 📈 Comprehensive Model Evaluation & Confusion Matrices")
+    st.write(
+        "Quantitative benchmark metrics evaluated on the 351 held-out test samples (`data/labeled/test_multitask.csv`) "
+        "demonstrating multi-task generalization across crops, developmental stages, and foliar diseases."
+    )
+
+    c_m1, c_m2, c_m3, c_m4, c_m5 = st.columns(5)
+    with c_m1:
+        st.metric("🌱 Crop Accuracy", "94.02%", delta="Held-out Test")
+    with c_m2:
+        st.metric("📈 Stage Accuracy", "82.34%", delta="Held-out Test")
+    with c_m3:
+        st.metric("🩺 Disease Accuracy", "99.43%", delta="Held-out Test")
+    with c_m4:
+        st.metric("🛡️ Confident Pass", "82.91%", delta="≥ 70% Floor")
+    with c_m5:
+        st.metric("⚠️ Selective Abstention", "17.09%", delta="Flagged Cases")
+
+    st.divider()
+
+    st.markdown("#### 🎯 Interactive Confusion Matrix Explorer")
+    matrix_choice = st.selectbox(
+        "Select classification task:",
+        [
+            "Foliar Disease / Condition (5 classes)",
+            "Growth Stage Recognition (5 stages)",
+            "Crop Identification (12 crops)"
+        ]
+    )
+
+    if matrix_choice.startswith("Foliar"):
+        cm_file = EVAL_DIR / "condition_confusion_matrix.csv"
+        title = "Foliar Disease & Health Confusion Matrix"
+    elif matrix_choice.startswith("Growth"):
+        cm_file = EVAL_DIR / "stage_confusion_matrix.csv"
+        title = "Growth Stage Confusion Matrix"
+    else:
+        cm_file = EVAL_DIR / "crop_confusion_matrix.csv"
+        title = "Crop Identification Confusion Matrix"
+
+    if cm_file.exists():
+        df_cm = pd.read_csv(cm_file, index_col=0)
+
+        col_plot, col_data = st.columns([3, 2])
+        with col_plot:
+            fig, ax = plt.subplots(figsize=(7, 5))
+            cax = ax.imshow(df_cm.values, cmap="Blues", interpolation="nearest")
+            fig.colorbar(cax, fraction=0.046, pad=0.04)
+
+            ticks = np.arange(len(df_cm.columns))
+            ax.set_xticks(ticks)
+            ax.set_yticks(ticks)
+            ax.set_xticklabels(df_cm.columns, rotation=45, ha="right", fontsize=9)
+            ax.set_yticklabels(df_cm.index, fontsize=9)
+            ax.set_xlabel("Predicted Label", fontweight="bold")
+            ax.set_ylabel("True Label", fontweight="bold")
+            ax.set_title(title, fontweight="bold", pad=12)
+
+            thresh = df_cm.values.max() / 2.0 if df_cm.values.max() > 0 else 1
+            for i in range(len(df_cm.index)):
+                for j in range(len(df_cm.columns)):
+                    val = df_cm.values[i, j]
+                    ax.text(
+                        j, i, f"{int(val)}",
+                        ha="center", va="center",
+                        color="white" if val > thresh else "black",
+                        fontsize=9
+                    )
+
+            plt.tight_layout()
+            st.pyplot(fig)
+            plt.close(fig)
+
+        with col_data:
+            st.markdown("##### 🔢 Raw Counts Table")
+            st.dataframe(df_cm, use_container_width=True)
+
+            if matrix_choice.startswith("Foliar"):
+                st.info(
+                    "**Key Finding:** 99.43% test accuracy on disease symptoms. "
+                    "Healthy paddy, Bacterial Blight, and Blast achieved 100% precision."
+                )
+            elif matrix_choice.startswith("Growth"):
+                st.info(
+                    "**Key Finding:** 82.34% stage accuracy. Confusions concentrate along "
+                    "adjacent transitional boundaries (vegetation ↔ full_growth)."
+                )
+            else:
+                st.info(
+                    "**Key Finding:** 94.02% crop accuracy. Dominant staples (Rice, Coconut, "
+                    "Sugarcane, Maize) show high precision with class-weighted loss mitigation."
+                )
+
+    st.divider()
+
+    st.markdown("#### 📋 Task-Wise Classification Breakdown")
+    summary_path = EVAL_DIR / "multitask_evaluation_summary.txt"
+    if summary_path.exists():
+        with open(summary_path, "r") as f:
+            full_txt = f.read()
+
+        with st.expander("📄 View Full Scikit-Learn Classification Reports (Precision, Recall, F1)", expanded=False):
+            st.code(full_txt, language="text")
+
+        st.download_button(
+            "📥 Download Multi-Task Evaluation Report (TXT)",
+            data=full_txt,
+            file_name="multitask_evaluation_report.txt",
+            mime="text/plain"
+        )

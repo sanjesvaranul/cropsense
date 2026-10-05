@@ -14,7 +14,7 @@ Confidence Floor Threshold: 70%
 
 - Automated High-Confidence Pass   : 291/351 (82.91%)
 - Selective Abstention / Review    : 60/351 (17.09%)
-- Single Image Inference Latency   : Mean = 47.21 ms | P95 = 56.15 ms
+- Single Image Inference Latency   : Mean = 46.72 ms | P95 = 64.20 ms
 
 ----------------------------------------------------------------------
 2. FAILURE CASE DEEP DIVE & ERROR PATTERNS

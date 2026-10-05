@@ -13,3 +13,4 @@ streamlit
 dvc
 python-dotenv
 requests
+matplotlib

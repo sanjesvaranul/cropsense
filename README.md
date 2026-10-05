@@ -154,6 +154,7 @@ Open [http://localhost:8501](http://localhost:8501) to explore:
 * **Tab 2: Batch Inference** with multiple file upload and CSV export.
 * **Tab 3: Human-in-the-Loop Review Queue** showcasing abstained cases and root causes.
 * **Tab 4: Teacher vs. Student Comparison Dashboard** with accuracy, cost, latency, and footprint metrics.
+* **Tab 5: Evaluation & Confusion Matrices** with interactive matrix heatmaps, classification reports, and test metrics.
 
 ### 3. Re-run Evaluation and Failure Analysis
 ```bash

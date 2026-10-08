@@ -2,11 +2,11 @@
 CropSense - Comprehensive Multi-Task Held-Out Test Evaluation
 =================================================================
 Total Test Samples   : 351
-Crop Accuracy        : 94.02%
-Stage Accuracy       : 82.34%
+Crop Accuracy        : 94.30%
+Stage Accuracy       : 82.62%
 Disease Accuracy     : 99.43%
-High-Confidence Pass : 291/351 (82.91%)
-Abstention / Review  : 60/351 (17.09%)
+High-Confidence Pass : 299/351 (85.19%)
+Abstention / Review  : 52/351 (14.81%)
 -----------------------------------------------------------------
 
 ============================== CROP REPORT ======================
@@ -14,19 +14,19 @@ Abstention / Review  : 60/351 (17.09%)
 
                     Banana       0.71      0.62      0.67         8
                    Cassava       0.00      0.00      0.00         1
-                   Coconut       0.92      0.88      0.90        64
+                   Coconut       0.88      0.89      0.88        64
 Diploid Cotton (Paruththi)       0.00      0.00      0.00         0
             Fodder Sorghum       0.00      0.00      0.00         0
                  Groundnut       1.00      1.00      1.00         1
-                     Maize       0.92      0.85      0.88        13
+                     Maize       1.00      0.85      0.92        13
                      Mango       0.00      0.00      0.00         0
                   Marigold       0.00      0.00      0.00         0
-              Rice (Paddy)       0.96      0.98      0.97       251
+              Rice (Paddy)       0.97      0.98      0.97       251
                    Sorghum       0.00      0.00      0.00         0
-                 Sugarcane       0.77      0.77      0.77        13
+                 Sugarcane       0.85      0.85      0.85        13
 
                   accuracy                           0.94       351
-                 macro avg       0.44      0.42      0.43       351
+                 macro avg       0.45      0.43      0.44       351
               weighted avg       0.94      0.94      0.94       351
 
 
@@ -34,14 +34,14 @@ Diploid Cotton (Paruththi)       0.00      0.00      0.00         0
               precision    recall  f1-score   support
 
    flowering       0.20      0.50      0.29         2
- full_growth       0.88      0.67      0.76       116
+ full_growth       0.88      0.68      0.77       116
   harvesting       0.40      0.40      0.40         5
-        sown       0.67      0.50      0.57         8
-  vegetation       0.83      0.93      0.88       220
+        sown       0.56      0.62      0.59         8
+  vegetation       0.84      0.92      0.88       220
 
-    accuracy                           0.82       351
-   macro avg       0.59      0.60      0.58       351
-weighted avg       0.83      0.82      0.82       351
+    accuracy                           0.83       351
+   macro avg       0.57      0.63      0.58       351
+weighted avg       0.84      0.83      0.83       351
 
 
 ============================ DISEASE/CONDITION REPORT ===========

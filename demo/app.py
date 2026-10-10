@@ -187,6 +187,9 @@ def get_prediction(image_bytes, image_name="sample.jpg"):
     # 2. Seamless in-process fallback (for Streamlit Community Cloud)
     return run_inprocess_inference(image_bytes)
 
+if "live_flagged_cases" not in st.session_state:
+    st.session_state["live_flagged_cases"] = []
+
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📸 Single-Photo Diagnosis",
     "📂 Batch Inference & Export",
@@ -246,64 +249,106 @@ with tab1:
                 with st.spinner("Executing multi-task inference..."):
                     try:
                         result = get_prediction(image_to_process, image_name)
-                        st.divider()
-
-                        is_confident = result.get("status") == "confident"
-
-                        if is_confident:
-                            st.success("✅ **High-Confidence Prediction Passed (Confidence Floor ≥ 70%)**")
-                        else:
-                            st.warning("⚠️ **Abstention Triggered (Flagged for Agronomist / Teacher Review)**")
-                            if "abstention_reason" in result:
-                                st.caption(f"Reason: {result['abstention_reason']}")
-
-                        # Metrics row 1: Predictions
-                        c1, c2, c3 = st.columns(3)
-                        with c1:
-                            st.metric("🌱 Crop Type", result.get("crop") or "Unknown")
-                        with c2:
-                            st.metric("📈 Growth Stage", result.get("stage") or "Unknown")
-                        with c3:
-                            cond_name = result.get("condition") or "Unknown"
-                            st.metric("🩺 Health / Disease", cond_name)
-
-                        # Metrics row 2: Confidences
-                        conf_c1, conf_c2, conf_c3 = st.columns(3)
-                        crop_conf = result.get("crop_confidence")
-                        stage_conf = result.get("stage_confidence")
-                        dis_conf = result.get("disease_confidence")
-
-                        with conf_c1:
-                            if crop_conf is not None:
-                                st.metric("Crop Confidence", f"{crop_conf * 100:.1f}%")
-                        with conf_c2:
-                            if stage_conf is not None:
-                                st.metric("Stage Confidence", f"{stage_conf * 100:.1f}%")
-                        with conf_c3:
-                            if dis_conf is not None:
-                                st.metric("Disease Confidence", f"{dis_conf * 100:.1f}%")
-
-                        st.divider()
-
-                        # Actionable Disease Advisory Section
-                        st.markdown("### 📋 Agronomic Advisory & Treatment Recommendation")
-                        condition = result.get("condition", "Healthy")
-                        advisory = ADVISORIES.get(condition, {
-                            "icon": "ℹ️",
-                            "desc": "Inspection required for unknown or atypical foliar symptoms.",
-                            "action": "Consult local Krishi Vigyan Kendra (KVK) or agricultural extension specialist."
-                        })
-
-                        st.markdown(f"**Condition Status:** {advisory.get('icon', '')} `{condition}`")
-                        st.info(f"**Diagnosis Details:** {advisory.get('desc', '')}")
-                        st.warning(f"**Recommended Action:** {advisory.get('action', '')}")
-
-                        st.caption(
-                            f"Inference Route: `{result.get('source')}` | Decision Engine: EfficientNet-B0 (Edge) | Status: `{result.get('status')}`"
-                        )
-
+                        st.session_state["current_diagnosis"] = {
+                            "result": result,
+                            "image_name": image_name
+                        }
                     except Exception as e:
                         st.error(f"Execution Error: {e}")
+
+            diag = st.session_state.get("current_diagnosis")
+            if diag and diag.get("image_name") == image_name:
+                result = diag["result"]
+                st.divider()
+
+                is_confident = result.get("status") == "confident"
+                crop_conf = result.get("crop_confidence")
+                stage_conf = result.get("stage_confidence")
+                dis_conf = result.get("disease_confidence")
+
+                if is_confident:
+                    st.success("✅ **High-Confidence Prediction Passed (Confidence Floor ≥ 70%)**")
+                else:
+                    st.warning("⚠️ **Abstention Triggered (Flagged for Agronomist / Teacher Review)**")
+                    if "abstention_reason" in result:
+                        st.caption(f"Reason: {result['abstention_reason']}")
+                    st.info("📥 **Routed to Review Queue:** This ambiguous image has been dynamically added to the **Review Queue (Tab 3)** for human agronomist verification.")
+
+                    # Dynamically register into live flagged queue for Tab 3
+                    low_reasons = []
+                    if crop_conf is not None and crop_conf < 0.70:
+                        low_reasons.append(f"Crop ({crop_conf*100:.1f}%)")
+                    if stage_conf is not None and stage_conf < 0.70:
+                        low_reasons.append(f"Stage ({stage_conf*100:.1f}%)")
+                    if dis_conf is not None and dis_conf < 0.70:
+                        low_reasons.append(f"Condition ({dis_conf*100:.1f}%)")
+
+                    cat_str = f"Live Upload Abstention: {', '.join(low_reasons)}" if low_reasons else "Live Upload (<70% Confidence Floor)"
+                    case_key = f"{image_name}_{crop_conf}_{stage_conf}_{dis_conf}"
+
+                    existing_keys = {c.get("_key") for c in st.session_state.live_flagged_cases}
+                    if case_key not in existing_keys:
+                        st.session_state.live_flagged_cases.insert(0, {
+                            "_key": case_key,
+                            "image_path": f"📸 [Live Upload] {image_name}",
+                            "true_crop": "Pending Verification",
+                            "pred_crop": result.get("crop") or "Unknown",
+                            "crop_conf": round(float(crop_conf), 4) if crop_conf is not None else 0.0,
+                            "crop_correct": False,
+                            "true_stage": "Pending Verification",
+                            "pred_stage": result.get("stage") or "Unknown",
+                            "stage_conf": round(float(stage_conf), 4) if stage_conf is not None else 0.0,
+                            "stage_correct": False,
+                            "true_condition": "Pending Verification",
+                            "pred_condition": result.get("condition") or "Unknown",
+                            "condition_conf": round(float(dis_conf), 4) if dis_conf is not None else 0.0,
+                            "condition_correct": False,
+                            "status": "needs_review",
+                            "latency_ms": 36.2,
+                            "failure_category": cat_str,
+                            "action_required": "Escalate to Teacher VLM / Agronomist Review"
+                        })
+
+                # Metrics row 1: Predictions
+                c1, c2, c3 = st.columns(3)
+                with c1:
+                    st.metric("🌱 Crop Type", result.get("crop") or "Unknown")
+                with c2:
+                    st.metric("📈 Growth Stage", result.get("stage") or "Unknown")
+                with c3:
+                    cond_name = result.get("condition") or "Unknown"
+                    st.metric("🩺 Health / Disease", cond_name)
+
+                # Metrics row 2: Confidences
+                conf_c1, conf_c2, conf_c3 = st.columns(3)
+                with conf_c1:
+                    if crop_conf is not None:
+                        st.metric("Crop Confidence", f"{crop_conf * 100:.1f}%")
+                with conf_c2:
+                    if stage_conf is not None:
+                        st.metric("Stage Confidence", f"{stage_conf * 100:.1f}%")
+                with conf_c3:
+                    if dis_conf is not None:
+                        st.metric("Disease Confidence", f"{dis_conf * 100:.1f}%")
+
+                st.divider()
+
+                # Actionable Disease Advisory Section
+                st.markdown("### 📋 Agronomic Advisory & Treatment Recommendation")
+                condition = result.get("condition", "Healthy")
+                advisory = ADVISORIES.get(condition, {
+                    "icon": "ℹ️",
+                    "desc": "Inspection required for unknown or atypical foliar symptoms.",
+                    "action": "Consult local Krishi Vigyan Kendra (KVK) or agricultural extension specialist."
+                })
+
+                st.markdown(f"**Condition Status:** {advisory.get('icon', '')} `{condition}`")
+                st.info(f"**Diagnosis Details:** {advisory.get('desc', '')}")
+                st.warning(f"**Recommended Action:** {advisory.get('action', '')}")
+
+                st.caption(
+                    f"Inference Route: `{result.get('source')}` | Decision Engine: EfficientNet-B0 (Edge) | Status: `{result.get('status')}`"
+                )
         else:
             st.info("👈 Select a sample from the library or upload a field photograph to begin diagnosis.")
 
@@ -339,6 +384,32 @@ with tab2:
                         "Disease Confidence": f"{data.get('disease_confidence', 0)*100:.1f}%",
                         "Route Status": data.get("status")
                     })
+                    if data.get("status") != "confident":
+                        b_crop = data.get("crop_confidence") or 0.0
+                        b_stage = data.get("stage_confidence") or 0.0
+                        b_dis = data.get("disease_confidence") or 0.0
+                        b_key = f"{file.name}_{b_crop}_{b_stage}_{b_dis}"
+                        if b_key not in {c.get("_key") for c in st.session_state.live_flagged_cases}:
+                            st.session_state.live_flagged_cases.insert(0, {
+                                "_key": b_key,
+                                "image_path": f"📸 [Batch Upload] {file.name}",
+                                "true_crop": "Pending Verification",
+                                "pred_crop": data.get("crop") or "Unknown",
+                                "crop_conf": round(float(b_crop), 4),
+                                "crop_correct": False,
+                                "true_stage": "Pending Verification",
+                                "pred_stage": data.get("stage") or "Unknown",
+                                "stage_conf": round(float(b_stage), 4),
+                                "stage_correct": False,
+                                "true_condition": "Pending Verification",
+                                "pred_condition": data.get("condition") or "Unknown",
+                                "condition_conf": round(float(b_dis), 4),
+                                "condition_correct": False,
+                                "status": "needs_review",
+                                "latency_ms": 36.2,
+                                "failure_category": "Batch Upload Abstention (<70% Confidence)",
+                                "action_required": "Escalate to Teacher VLM / Agronomist Review"
+                            })
                 except Exception as e:
                     batch_results.append({"Filename": file.name, "Route Status": f"Error: {e}"})
                 progress_bar.progress((idx + 1) / len(batch_files))
@@ -367,30 +438,63 @@ with tab3:
     failures_csv = EVAL_DIR / "failure_cases_analysis.csv"
     if failures_csv.exists():
         df_fail = pd.read_csv(failures_csv)
-        col_f1, col_f2, col_f3 = st.columns(3)
-        with col_f1:
-            st.metric("Total Flagged / Review Cases", len(df_fail))
-        with col_f2:
-            st.metric("Selective Abstention Rate (< 70%)", "17.09%")
-        with col_f3:
-            st.metric("Safety Floor Threshold", "70.0%")
-
-        st.markdown("#### 📋 Flagged Test Cases Queue")
-        st.dataframe(df_fail[[
-            "image_path", "true_crop", "pred_crop", "crop_conf",
-            "true_stage", "pred_stage", "stage_conf",
-            "true_condition", "pred_condition", "condition_conf",
-            "failure_category"
-        ]], use_container_width=True)
-
-        st.markdown("#### 🔍 Root-Cause Analysis")
-        st.info("""
-        - **Growth Stage Continuum:** The majority of stage misclassifications occur at the transitional boundary between *vegetation* and *full_growth*. CropSense automatically detects this ambiguity and abstains rather than making an unverified guess.
-        - **Crop Type Consistency:** Staple crops (Rice, Coconut, Maize, Sugarcane) maintain >95% accuracy.
-        - **Disease Diagnostics:** 99.43% overall accuracy on foliar diseases with only 2 boundary cases across 351 test images.
-        """)
     else:
-        st.info("Run `python training/analyze_failures.py` to generate the test failure queue.")
+        df_fail = pd.DataFrame()
+
+    live_cases = st.session_state.get("live_flagged_cases", [])
+    if live_cases:
+        df_live = pd.DataFrame(live_cases)
+        if "_key" in df_live.columns:
+            df_live = df_live.drop(columns=["_key"])
+        df_combined = pd.concat([df_live, df_fail], ignore_index=True)
+    else:
+        df_combined = df_fail
+
+    col_f1, col_f2, col_f3 = st.columns(3)
+    total_flagged = len(df_combined)
+    live_count = len(live_cases)
+
+    with col_f1:
+        if live_count > 0:
+            st.metric("Total Flagged / Review Cases", total_flagged, delta=f"+{live_count} Live Upload{'s' if live_count > 1 else ''}")
+        else:
+            st.metric("Total Flagged / Review Cases", total_flagged)
+
+    with col_f2:
+        total_eval_pool = 351 + live_count
+        rate = (total_flagged / total_eval_pool) * 100 if total_eval_pool > 0 else 17.09
+        delta_str = f"+{live_count} Added" if live_count > 0 else None
+        st.metric("Selective Abstention Rate (< 70%)", f"{rate:.2f}%", delta=delta_str)
+
+    with col_f3:
+        st.metric("Safety Floor Threshold", "70.0%")
+
+    if live_count > 0:
+        st.success(
+            f"⚡ **{live_count} Live Upload(s) Queued for Review:** Newly submitted field photo(s) that triggered abstention (<70% confidence) are prioritized at the top of the queue below."
+        )
+
+    st.markdown("#### 📋 Flagged Test Cases Queue")
+    display_cols = [
+        "image_path", "true_crop", "pred_crop", "crop_conf",
+        "true_stage", "pred_stage", "stage_conf",
+        "true_condition", "pred_condition", "condition_conf",
+        "failure_category"
+    ]
+    avail_cols = [c for c in display_cols if c in df_combined.columns]
+    st.dataframe(df_combined[avail_cols], use_container_width=True)
+
+    if live_count > 0:
+        if st.button("🧹 Clear Live Uploads from Queue"):
+            st.session_state.live_flagged_cases = []
+            st.rerun()
+
+    st.markdown("#### 🔍 Root-Cause Analysis")
+    st.info("""
+    - **Growth Stage Continuum:** The majority of stage misclassifications occur at the transitional boundary between *vegetation* and *full_growth*. CropSense automatically detects this ambiguity and abstains rather than making an unverified guess.
+    - **Crop Type Consistency:** Staple crops (Rice, Coconut, Maize, Sugarcane) maintain >95% accuracy.
+    - **Disease Diagnostics:** 99.43% overall accuracy on foliar diseases with only 2 boundary cases across 351 test images.
+    """)
 
 # ==============================================================================
 # TAB 4: TEACHER VS. STUDENT BENCHMARK

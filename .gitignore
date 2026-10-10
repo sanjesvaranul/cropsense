@@ -3,9 +3,10 @@ cropsense-env/
 data/raw/*
 data/labeled/*.csv
 *.pt
-*.pth
 __pycache__/
-*.pth
 *.zip
 cloudflared.exe
 cropsense.txt
+models/cropsense_crop_stage_only.pth
+training/backups/*
+training/models/*

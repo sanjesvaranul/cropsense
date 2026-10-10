@@ -74,6 +74,111 @@ ADVISORIES = {
     }
 }
 
+# ==============================================================================
+# IN-PROCESS INFERENCE FALLBACK (FOR STREAMLIT COMMUNITY CLOUD & STANDALONE)
+# ==============================================================================
+import json
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torchvision import models, transforms
+
+MODEL_PATH = Path("models/cropsense_best.pth")
+LABELS_PATH = Path("models/class_mapping.json")
+
+class CropSenseModel(nn.Module):
+    def __init__(self, num_crops, num_stages, num_conditions):
+        super().__init__()
+        backbone = models.efficientnet_b0(weights=None)
+        self.features = backbone.features
+        self.pool = backbone.avgpool
+        feat_size = backbone.classifier[1].in_features
+        self.crop_head = nn.Linear(feat_size, num_crops)
+        self.stage_head = nn.Linear(feat_size, num_stages)
+        self.condition_head = nn.Linear(feat_size, num_conditions)
+
+    def forward(self, x):
+        x = self.pool(self.features(x))
+        x = torch.flatten(x, 1)
+        return self.crop_head(x), self.stage_head(x), self.condition_head(x)
+
+@st.cache_resource(show_spinner=False)
+def load_inprocess_engine():
+    if not MODEL_PATH.exists() or not LABELS_PATH.exists():
+        return None, None, None, None, None
+
+    with open(LABELS_PATH, "r") as f:
+        mappings = json.load(f)
+
+    crop_names = {int(k): v for v, k in mappings["crop_map"].items()}
+    stage_names = {int(k): v for v, k in mappings["stage_map"].items()}
+    condition_names = {int(k): v for v, k in mappings.get("condition_map", {}).items()}
+
+    ckpt = torch.load(MODEL_PATH, map_location="cpu", weights_only=True)
+    model = CropSenseModel(len(crop_names), len(stage_names), len(condition_names))
+    model.load_state_dict(ckpt["model_state_dict"])
+    model.eval()
+
+    transform = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+    ])
+    return model, transform, crop_names, stage_names, condition_names
+
+def run_inprocess_inference(image_bytes):
+    model, transform, crop_names, stage_names, condition_names = load_inprocess_engine()
+    if model is None:
+        raise RuntimeError("Model checkpoint or class mapping not found in models/.")
+
+    with Image.open(io.BytesIO(image_bytes)) as img:
+        img_rgb = img.convert("RGB")
+    tensor = transform(img_rgb).unsqueeze(0)
+
+    with torch.no_grad():
+        crop_logits, stage_logits, cond_logits = model(tensor)
+
+    def eval_head(logits):
+        probs = F.softmax(logits, dim=-1)
+        conf, pred = probs.max(dim=-1)
+        c_val = float(conf.item())
+        p_val = int(pred.item())
+        return c_val, p_val, ("confident" if c_val >= 0.70 else "needs_review")
+
+    crop_conf, crop_pred, crop_stat = eval_head(crop_logits)
+    stage_conf, stage_pred, stage_stat = eval_head(stage_logits)
+    cond_conf, cond_pred, cond_stat = eval_head(cond_logits)
+
+    is_confident = (crop_stat == "confident" and stage_stat == "confident" and cond_stat == "confident")
+
+    return {
+        "source": "student_inprocess",
+        "crop": crop_names.get(crop_pred),
+        "stage": stage_names.get(stage_pred),
+        "condition": condition_names.get(cond_pred),
+        "crop_confidence": crop_conf,
+        "stage_confidence": stage_conf,
+        "disease_confidence": cond_conf,
+        "status": "confident" if is_confident else "needs_review",
+        "abstention_reason": None if is_confident else "One or more prediction heads fell below the 70% confidence threshold"
+    }
+
+def get_prediction(image_bytes, image_name="sample.jpg"):
+    # 1. Try local/remote FastAPI first if reachable
+    try:
+        resp = requests.post(
+            API_URL,
+            files={"file": (image_name, image_bytes, "image/jpeg")},
+            timeout=1.5
+        )
+        if resp.status_code == 200:
+            return resp.json()
+    except Exception:
+        pass
+
+    # 2. Seamless in-process fallback (for Streamlit Community Cloud)
+    return run_inprocess_inference(image_bytes)
+
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📸 Single-Photo Diagnosis",
     "📂 Batch Inference & Export",
@@ -132,17 +237,7 @@ with tab1:
             if st.button("🔍 Run CropSense Intelligence", type="primary", use_container_width=True):
                 with st.spinner("Executing multi-task inference..."):
                     try:
-                        response = requests.post(
-                            API_URL,
-                            files={"file": (image_name, image_to_process, "image/jpeg")},
-                            timeout=30
-                        )
-
-                        if response.status_code != 200:
-                            st.error(f"API Error ({response.status_code}): {response.text}")
-                            st.stop()
-
-                        result = response.json()
+                        result = get_prediction(image_to_process, image_name)
                         st.divider()
 
                         is_confident = result.get("status") == "confident"
@@ -199,11 +294,6 @@ with tab1:
                             f"Inference Route: `{result.get('source')}` | Decision Engine: EfficientNet-B0 (Edge) | Status: `{result.get('status')}`"
                         )
 
-                    except requests.exceptions.ConnectionError:
-                        st.error(
-                            "❌ Could not connect to CropSense FastAPI backend (http://127.0.0.1:8000). "
-                            "Ensure the API server is started with: `python -m uvicorn inference.router:app --port 8000`"
-                        )
                     except Exception as e:
                         st.error(f"Execution Error: {e}")
         else:
@@ -230,23 +320,17 @@ with tab2:
 
             for idx, file in enumerate(batch_files):
                 try:
-                    resp = requests.post(
-                        API_URL,
-                        files={"file": (file.name, file.getvalue(), file.type)},
-                        timeout=30
-                    )
-                    if resp.status_code == 200:
-                        data = resp.json()
-                        batch_results.append({
-                            "Filename": file.name,
-                            "Crop": data.get("crop"),
-                            "Crop Confidence": f"{data.get('crop_confidence', 0)*100:.1f}%",
-                            "Growth Stage": data.get("stage"),
-                            "Stage Confidence": f"{data.get('stage_confidence', 0)*100:.1f}%",
-                            "Disease Condition": data.get("condition"),
-                            "Disease Confidence": f"{data.get('disease_confidence', 0)*100:.1f}%",
-                            "Route Status": data.get("status")
-                        })
+                    data = get_prediction(file.getvalue(), file.name)
+                    batch_results.append({
+                        "Filename": file.name,
+                        "Crop": data.get("crop"),
+                        "Crop Confidence": f"{data.get('crop_confidence', 0)*100:.1f}%",
+                        "Growth Stage": data.get("stage"),
+                        "Stage Confidence": f"{data.get('stage_confidence', 0)*100:.1f}%",
+                        "Disease Condition": data.get("condition"),
+                        "Disease Confidence": f"{data.get('disease_confidence', 0)*100:.1f}%",
+                        "Route Status": data.get("status")
+                    })
                 except Exception as e:
                     batch_results.append({"Filename": file.name, "Route Status": f"Error: {e}"})
                 progress_bar.progress((idx + 1) / len(batch_files))

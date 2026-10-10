@@ -7,3 +7,4 @@ data/labeled/*.csv
 __pycache__/
 *.pth
 *.zip
+cloudflared.exe

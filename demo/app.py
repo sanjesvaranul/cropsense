@@ -24,11 +24,19 @@ st.markdown("""
     .reportview-container {
         margin-top: -2em;
     }
-    .stMetric {
-        background-color: #f4f7f5;
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid #e1ebe3;
+    div[data-testid="stMetric"], .stMetric {
+        background-color: var(--secondary-background-color, rgba(128, 128, 128, 0.08)) !important;
+        border: 1px solid rgba(128, 128, 128, 0.2) !important;
+        padding: 14px 18px !important;
+        border-radius: 10px !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+    div[data-testid="stMetric"] div[data-testid="stMetricLabel"] p {
+        font-weight: 600;
+        color: var(--text-color, inherit) !important;
+    }
+    div[data-testid="stMetric"] div[data-testid="stMetricValue"] div {
+        color: var(--text-color, inherit) !important;
     }
 </style>
 """, unsafe_allow_html=True)

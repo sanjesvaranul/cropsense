@@ -33,9 +33,12 @@ if ENV_PATH.exists():
 try:
     import streamlit as st
     if hasattr(st, "secrets"):
-        for key in ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_SESSION_TOKEN", "AWS_REGION", "AWS_S3_BUCKET", "AWS_DYNAMODB_TABLE"]:
-            if key in st.secrets and key not in os.environ:
-                os.environ[key] = str(st.secrets[key])
+        try:
+            for key in ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_SESSION_TOKEN", "AWS_REGION", "AWS_S3_BUCKET", "AWS_DYNAMODB_TABLE"]:
+                if key in st.secrets and key not in os.environ:
+                    os.environ[key] = str(st.secrets[key])
+        except Exception:
+            pass
 except Exception:
     pass
 

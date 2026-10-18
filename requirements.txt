@@ -1,7 +1,5 @@
 torch
 torchvision
-transformers
-accelerate
 fastapi
 uvicorn
 pydantic
@@ -10,7 +8,6 @@ pandas
 numpy
 pillow
 streamlit
-dvc
 python-dotenv
 requests
 matplotlib

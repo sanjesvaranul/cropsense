@@ -272,16 +272,36 @@ with tab1:
         image_to_process = None
         image_name = "sample.jpg"
 
+        def safe_display_image(img_source, caption=""):
+            try:
+                if isinstance(img_source, (bytes, bytearray)):
+                    img = Image.open(io.BytesIO(img_source))
+                elif isinstance(img_source, (str, Path)):
+                    img = Image.open(str(img_source))
+                elif hasattr(img_source, "getvalue"):
+                    img = Image.open(io.BytesIO(img_source.getvalue()))
+                else:
+                    img = img_source
+                try:
+                    st.image(img, caption=caption, use_container_width=True)
+                except TypeError:
+                    try:
+                        st.image(img, caption=caption, width="stretch")
+                    except Exception:
+                        st.image(img, caption=caption)
+            except Exception as e:
+                st.caption(f"📸 {caption}")
+
         if uploaded:
             image_to_process = uploaded.getvalue()
             image_name = uploaded.name
-            st.image(uploaded, caption="Uploaded Crop Image", use_container_width=True)
+            safe_display_image(image_to_process, caption="Uploaded Crop Image")
         elif selected_sample and sample_options[selected_sample]:
             sample_path = Path(sample_options[selected_sample])
             with open(sample_path, "rb") as f:
                 image_to_process = f.read()
             image_name = sample_path.name
-            st.image(sample_path, caption=f"Selected: {selected_sample}", use_container_width=True)
+            safe_display_image(sample_path, caption=f"Selected: {selected_sample}")
 
     with col_main:
         if image_to_process:

@@ -9,6 +9,7 @@ numpy
 pillow
 streamlit
 altair<5
+standard-imghdr
 python-dotenv
 requests
 matplotlib

@@ -29,6 +29,16 @@ if ENV_PATH.exists():
                 k, v = line.split("=", 1)
                 os.environ[k.strip()] = v.strip()
 
+# Automatically load Streamlit secrets if running inside Streamlit Cloud
+try:
+    import streamlit as st
+    if hasattr(st, "secrets"):
+        for key in ["AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_SESSION_TOKEN", "AWS_REGION", "AWS_S3_BUCKET", "AWS_DYNAMODB_TABLE"]:
+            if key in st.secrets and key not in os.environ:
+                os.environ[key] = str(st.secrets[key])
+except Exception:
+    pass
+
 AWS_REGION = os.getenv("AWS_REGION", "ap-south-1")
 S3_BUCKET = os.getenv("AWS_S3_BUCKET", "fai-tce-team46-cropsense-images")
 DDB_TABLE = os.getenv("AWS_DYNAMODB_TABLE", "fai-tce-team46-review-queue")
@@ -54,14 +64,19 @@ _ddb_resource = None
 _rek_client = None
 
 def get_aws_session():
-    """Return active boto3 session using environment credentials."""
+    """Return active boto3 session using environment credentials without IMDS latency."""
     global _session
     if _session is None:
+        ak = os.getenv("AWS_ACCESS_KEY_ID")
+        sk = os.getenv("AWS_SECRET_ACCESS_KEY")
+        # Strict check: do not initiate IMDS / network lookup if credentials are not configured
+        if not ak or not sk:
+            return None
         try:
             _session = boto3.Session(
                 region_name=AWS_REGION,
-                aws_access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),
-                aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),
+                aws_access_key_id=ak,
+                aws_secret_access_key=sk,
                 aws_session_token=os.getenv("AWS_SESSION_TOKEN"),
             )
         except Exception:
@@ -74,7 +89,9 @@ def is_aws_available():
     if not sess:
         return False
     try:
-        sts = sess.client("sts", region_name=AWS_REGION)
+        from botocore.config import Config
+        cfg = Config(connect_timeout=2, read_timeout=2, retries={'max_attempts': 1})
+        sts = sess.client("sts", region_name=AWS_REGION, config=cfg)
         sts.get_caller_identity()
         return True
     except Exception:

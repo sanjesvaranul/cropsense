@@ -14,3 +14,4 @@ dvc
 python-dotenv
 requests
 matplotlib
+boto3

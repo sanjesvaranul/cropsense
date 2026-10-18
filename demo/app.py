@@ -1,4 +1,5 @@
 import io
+import time
 import uuid
 from pathlib import Path
 import numpy as np
@@ -9,6 +10,12 @@ from PIL import Image
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
+st.set_page_config(
+    page_title="CropSense - Mobile Crop, Stage & Disease Intelligence",
+    page_icon="🌾",
+    layout="wide"
+)
 
 # AWS Cloud Services Integration (FarmwiseAI TCE Team 46)
 try:
@@ -24,15 +31,27 @@ try:
     AWS_AVAILABLE = is_aws_available()
 except Exception:
     AWS_AVAILABLE = False
+    def is_aws_available(): return False
+    def validate_crop_image_guardrail(*a, **kw): return {"passed": True, "status": "offline", "labels": [], "reason": "AWS offline"}
+    def archive_image_to_s3(*a, **kw): return None, None
+    def log_telemetry_to_dynamodb(*a, **kw): return False
+    def fetch_dynamodb_review_queue(*a, **kw): return []
+    def update_agronomist_review_decision(*a, **kw): return False
+    def get_cloud_summary_stats(*a, **kw): return {
+        "s3_bucket": "fai-tce-team46-cropsense-images",
+        "dynamodb_table": "fai-tce-team46-review-queue",
+        "region": "ap-south-1",
+        "team": "FAI-TCE-Team-46",
+        "total_s3_images": 0,
+        "total_db_records": 0,
+        "total_flagged": 0,
+        "cost_per_query_usd": 0.00012,
+        "allocated_budget_usd": 100.0,
+        "estimated_spent_usd": 0.28
+    }
 
 API_URL = "http://127.0.0.1:8000/predict"
 EVAL_DIR = Path("training/evaluation")
-
-st.set_page_config(
-    page_title="CropSense - Mobile Crop, Stage & Disease Intelligence",
-    page_icon="🌾",
-    layout="wide"
-)
 
 # Custom header styling
 st.markdown("""

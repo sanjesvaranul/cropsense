@@ -37,6 +37,28 @@ if not hasattr(st, "link_button"):
 if not hasattr(st, "cache_resource"):
     st.cache_resource = getattr(st, "experimental_singleton", lambda *a, **k: (lambda f: f))
 
+# Downcast LargeUtf8 types in PyArrow to prevent "Error: Unrecognized type: 'LargeUtf8' (20)" in frontend
+try:
+    import streamlit.dataframe_util as _df_util
+    if hasattr(_df_util, "convert_pandas_df_to_arrow_bytes"):
+        _orig_convert = _df_util.convert_pandas_df_to_arrow_bytes
+        def _safe_convert(df, *args, **kwargs):
+            kwargs["downcast_large_types"] = True
+            return _orig_convert(df, *args, **kwargs)
+        _df_util.convert_pandas_df_to_arrow_bytes = _safe_convert
+
+    if hasattr(_df_util, "convert_arrow_table_to_arrow_bytes") and hasattr(_df_util, "_downcast_large_arrow_types"):
+        _orig_table_convert = _df_util.convert_arrow_table_to_arrow_bytes
+        def _safe_table_convert(table, *args, **kwargs):
+            try:
+                table = _df_util._downcast_large_arrow_types(table)
+            except Exception:
+                pass
+            return _orig_table_convert(table, *args, **kwargs)
+        _df_util.convert_arrow_table_to_arrow_bytes = _safe_table_convert
+except Exception:
+    pass
+
 # AWS Cloud Services Integration (FarmwiseAI TCE Team 46)
 try:
     from inference.aws_service import (

@@ -37,27 +37,72 @@ if not hasattr(st, "link_button"):
 if not hasattr(st, "cache_resource"):
     st.cache_resource = getattr(st, "experimental_singleton", lambda *a, **k: (lambda f: f))
 
-# Downcast LargeUtf8 types in PyArrow to prevent "Error: Unrecognized type: 'LargeUtf8' (20)" in frontend
-try:
-    import streamlit.dataframe_util as _df_util
-    if hasattr(_df_util, "convert_pandas_df_to_arrow_bytes"):
-        _orig_convert = _df_util.convert_pandas_df_to_arrow_bytes
-        def _safe_convert(df, *args, **kwargs):
-            kwargs["downcast_large_types"] = True
-            return _orig_convert(df, *args, **kwargs)
-        _df_util.convert_pandas_df_to_arrow_bytes = _safe_convert
+# Resilient HTML Table Renderer to completely eliminate PyArrow "LargeUtf8" browser decoding errors
+def render_safe_table(df, use_container_width=True, height=None, **kwargs):
+    if not isinstance(df, pd.DataFrame):
+        try:
+            df = pd.DataFrame(df)
+        except Exception:
+            return st.write(df)
 
-    if hasattr(_df_util, "convert_arrow_table_to_arrow_bytes") and hasattr(_df_util, "_downcast_large_arrow_types"):
-        _orig_table_convert = _df_util.convert_arrow_table_to_arrow_bytes
-        def _safe_table_convert(table, *args, **kwargs):
-            try:
-                table = _df_util._downcast_large_arrow_types(table)
-            except Exception:
-                pass
-            return _orig_table_convert(table, *args, **kwargs)
-        _df_util.convert_arrow_table_to_arrow_bytes = _safe_table_convert
-except Exception:
-    pass
+    if df.empty:
+        st.info("No records to display.")
+        return
+
+    has_named_index = df.index.name is not None or not isinstance(df.index, pd.RangeIndex)
+
+    clean_df = df.copy()
+    for col in clean_df.columns:
+        if clean_df[col].dtype == float or clean_df[col].dtype == "float64":
+            clean_df[col] = clean_df[col].apply(lambda x: f"{x:.4f}" if pd.notnull(x) else "")
+
+    table_html = clean_df.to_html(
+        classes="cropsense-table",
+        index=has_named_index,
+        escape=False,
+        border=0
+    )
+
+    max_h = f"{height}px" if height else "420px"
+
+    html_container = f"""
+    <div style="max-height: {max_h}; overflow-y: auto; overflow-x: auto; border: 1px solid rgba(128, 128, 128, 0.25); border-radius: 8px; margin: 10px 0; background-color: var(--secondary-background-color, rgba(128, 128, 128, 0.05));">
+        <style>
+            table.cropsense-table {{
+                width: 100% !important;
+                border-collapse: collapse !important;
+                font-family: inherit !important;
+                font-size: 0.86rem !important;
+                text-align: left !important;
+                color: var(--text-color, inherit) !important;
+            }}
+            table.cropsense-table th {{
+                position: sticky !important;
+                top: 0 !important;
+                background-color: var(--background-color, #1a1c24) !important;
+                color: var(--text-color, inherit) !important;
+                font-weight: 600 !important;
+                padding: 10px 14px !important;
+                border-bottom: 2px solid rgba(128, 128, 128, 0.3) !important;
+                z-index: 2 !important;
+                white-space: nowrap !important;
+            }}
+            table.cropsense-table td {{
+                padding: 8px 14px !important;
+                border-bottom: 1px solid rgba(128, 128, 128, 0.12) !important;
+                white-space: nowrap !important;
+            }}
+            table.cropsense-table tr:hover td {{
+                background-color: rgba(128, 128, 128, 0.1) !important;
+            }}
+        </style>
+        {table_html}
+    </div>
+    """
+    st.markdown(html_container, unsafe_allow_html=True)
+
+# Rebind st.dataframe to render_safe_table throughout the entire application
+st.dataframe = render_safe_table
 
 # AWS Cloud Services Integration (FarmwiseAI TCE Team 46)
 try:

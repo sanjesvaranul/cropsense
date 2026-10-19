@@ -17,6 +17,26 @@ st.set_page_config(
     layout="wide"
 )
 
+# Backward compatibility shims for older Streamlit versions in cloud containers
+if not hasattr(st, "divider"):
+    st.divider = lambda: st.markdown("---")
+
+if not hasattr(st, "rerun"):
+    st.rerun = getattr(st, "experimental_rerun", lambda: None)
+
+if not hasattr(st, "link_button"):
+    def _link_button(label, url, **kw):
+        st.markdown(
+            f'<a href="{url}" target="_blank" style="text-decoration:none;">'
+            f'<button style="width:100%;padding:6px 12px;border-radius:6px;border:1px solid rgba(128,128,128,0.3);'
+            f'background:rgba(128,128,128,0.1);color:inherit;cursor:pointer;">{label}</button></a>',
+            unsafe_allow_html=True
+        )
+    st.link_button = _link_button
+
+if not hasattr(st, "cache_resource"):
+    st.cache_resource = getattr(st, "experimental_singleton", lambda *a, **k: (lambda f: f))
+
 # AWS Cloud Services Integration (FarmwiseAI TCE Team 46)
 try:
     from inference.aws_service import (
